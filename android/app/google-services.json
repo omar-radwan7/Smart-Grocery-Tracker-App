@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "108972889957",
+    "project_id": "smart-grocery-tracker-c0424",
+    "storage_bucket": "smart-grocery-tracker-c0424.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:108972889957:android:978ca03508b41025c9738c",
+        "android_client_info": {
+          "package_name": "com.smartgrocery.smart_grocery_tracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "108972889957-6u6n0g2h9em8il69vo8u4tv0ouch6d6e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.smartgrocery.smart_grocery_tracker",
+            "certificate_hash": "5ba909a10258c64e84579eedc1393d5746c34fc6"
+          }
+        },
+        {
+          "client_id": "108972889957-odoee9psrcbsftabhv4588lmfm62s5m5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1qcwmUx324IhpFpJpUoBIuLr3dzBSp3I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "108972889957-odoee9psrcbsftabhv4588lmfm62s5m5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

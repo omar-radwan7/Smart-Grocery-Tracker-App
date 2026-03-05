@@ -1,0 +1,38 @@
+name: smart_grocery_tracker
+description: "Smart Grocery Tracker - Track food items and their expiry dates"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # Firebase
+  firebase_core: ^3.13.0
+  firebase_auth: ^5.5.4
+  cloud_firestore: ^5.6.7
+  google_sign_in: ^6.2.2
+
+  # State Management
+  provider: ^6.1.2
+
+  # Utilities
+  intl: ^0.19.0
+  image_picker: ^1.1.2
+  uuid: ^4.5.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/
