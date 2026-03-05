@@ -8,10 +8,12 @@ import 'package:smart_grocery_tracker/providers/auth_provider.dart';
 import 'package:smart_grocery_tracker/providers/food_provider.dart';
 import 'package:smart_grocery_tracker/screens/auth/login_screen.dart';
 import 'package:smart_grocery_tracker/utils/app_theme.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   if (!kIsWeb) {
