@@ -89,6 +89,20 @@ class _AddFoodScreenState extends State<AddFoodScreen>
   }
 
   Future<void> _handleSubmit() async {
+    if (_nameController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Please enter a food name'),
+          backgroundColor: AppTheme.expiredRed,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+      return;
+    }
+    
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isSubmitting = true);
@@ -194,39 +208,6 @@ class _AddFoodScreenState extends State<AddFoodScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Name Field
-                  _buildSectionLabel('Food Name'),
-                  const SizedBox(height: 8),
-                  TextFormField(
-                    controller: _nameController,
-                    textCapitalization: TextCapitalization.words,
-                    textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
-                      hintText: 'e.g., Organic Milk',
-                      prefixIcon: const Icon(Icons.fastfood_outlined,
-                          color: AppTheme.textHint),
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide:
-                            const BorderSide(color: AppTheme.surfaceGrey),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide:
-                            const BorderSide(color: AppTheme.surfaceGrey),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Please enter a food name';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 24),
-
                   // Category Dropdown
                   _buildSectionLabel('Category'),
                   const SizedBox(height: 8),
@@ -247,7 +228,10 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                           .toList(),
                       onChanged: (value) {
                         if (value != null) {
-                          setState(() => _selectedCategory = value);
+                          setState(() {
+                            _selectedCategory = value;
+                            _nameController.clear();
+                          });
                         }
                       },
                       decoration: const InputDecoration(
@@ -260,6 +244,58 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                       borderRadius: BorderRadius.circular(14),
                       dropdownColor: Colors.white,
                     ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Name Field
+                  _buildSectionLabel('Food Name'),
+                  const SizedBox(height: 8),
+                  Builder(
+                    builder: (context) {
+                      List<String> items = List.from(AppConstants.categoryItems[_selectedCategory] ?? []);
+                      if (items.isEmpty) {
+                        items.add('Misc Item');
+                      }
+                      final currentName = _nameController.text.trim();
+                      if (currentName.isNotEmpty && !items.contains(currentName)) {
+                        items.add(currentName);
+                      }
+
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: AppTheme.surfaceGrey),
+                        ),
+                        child: DropdownButtonFormField<String>(
+                          // ignore: deprecated_member_use
+                          value: currentName.isEmpty ? null : currentName,
+                          hint: const Text('Select an item', style: TextStyle(color: AppTheme.textHint, fontSize: 14)),
+                          items: items
+                              .map((item) => DropdownMenuItem(
+                                    value: item,
+                                    child: Text(item),
+                                  ))
+                              .toList(),
+                          onChanged: (value) {
+                            if (value != null) {
+                              setState(() {
+                                _nameController.text = value;
+                              });
+                            }
+                          },
+                          decoration: const InputDecoration(
+                            prefixIcon: Icon(Icons.fastfood_outlined,
+                                color: AppTheme.textHint),
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                          ),
+                          borderRadius: BorderRadius.circular(14),
+                          dropdownColor: Colors.white,
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 24),
 
