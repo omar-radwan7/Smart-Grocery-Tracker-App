@@ -198,21 +198,60 @@ class AppTheme {
     }
   }
 
-  static IconData categoryIcon(String category) {
+  static String categoryImagePath(String category) {
     switch (category) {
-      case 'Fruits': return Icons.apple;
-      case 'Vegetables': return Icons.eco;
-      case 'Dairy': return Icons.water_drop;
-      case 'Meat & Poultry': return Icons.kebab_dining;
-      case 'Seafood': return Icons.set_meal;
-      case 'Bakery': return Icons.bakery_dining;
-      case 'Beverages': return Icons.local_cafe;
-      case 'Snacks': return Icons.cookie;
-      case 'Frozen': return Icons.ac_unit;
-      case 'Canned Goods': return Icons.inventory_2;
-      case 'Condiments': return Icons.water_drop_outlined;
-      case 'Grains & Pasta': return Icons.grain;
-      default: return Icons.fastfood;
+      case 'Fruits': return 'assets/images/items/fruits.png';
+      case 'Vegetables': return 'assets/images/items/vegetables.png';
+      case 'Dairy': return 'assets/images/items/milk.png'; // Fallback to milk if general dairy
+      case 'Meat & Poultry': return 'assets/images/items/beef.png';
+      case 'Seafood': return 'assets/images/items/salmon.png'; // Will need this image
+      case 'Bakery': return 'assets/images/items/bakery.png'; // Will need this image
+      case 'Frozen': return 'assets/images/items/frozen.png'; // Will need this image
+      case 'Canned Goods': return 'assets/images/items/canned.png'; // Will need this image
+      case 'Condiments': return 'assets/images/items/condiments.png'; // Will need this image
+      case 'Grains & Pasta': return 'assets/images/items/grains.png'; // Will need this image
+      default: return 'assets/images/items/fruits.png'; // Fallback
     }
+  }
+
+  static String itemImagePath(String itemName, String category) {
+    final name = itemName.toLowerCase();
+    
+    // Exact items we have images for
+    if (name.contains('apple')) return 'assets/images/items/apple.png';
+    if (name.contains('banana')) return 'assets/images/items/banana.png';
+    if (name.contains('orange')) return 'assets/images/items/orange.jpg';
+    if (name.contains('grape')) return 'assets/images/items/grapes.jpg';
+    if (name.contains('strawberr')) return 'assets/images/items/strawberry.jpg';
+    if (name.contains('tomato')) return 'assets/images/items/tomato.png';
+    if (name.contains('carrot')) return 'assets/images/items/carrot.jpg';
+    if (name.contains('onion')) return 'assets/images/items/onion.png';
+    if (name.contains('potato')) return 'assets/images/items/potato.jpg';
+    if (name.contains('lettuce')) return 'assets/images/items/lettuce.png';
+
+    if (name.contains('milk')) return 'assets/images/items/milk.png';
+    if (name.contains('cheese')) return 'assets/images/items/cheese.png';
+    if (name.contains('butter')) return 'assets/images/items/butter.png';
+    if (name.contains('egg')) return 'assets/images/items/eggs.png';
+
+    if (name.contains('beef') || name.contains('steak')) return 'assets/images/items/beef.png';
+    if (name.contains('chicken')) return 'assets/images/items/chicken.png';
+    if (name.contains('pork')) return 'assets/images/items/pork.png';
+    if (name.contains('sausage')) return 'assets/images/items/sausage.jpg';
+    if (name.contains('bacon')) return 'assets/images/items/bacon.jpg';
+
+    if (name.contains('salmon')) return 'assets/images/items/salmon.png';
+    if (name.contains('shrimp')) return 'assets/images/items/shrimp.jpg';
+    if (name.contains('tuna')) return 'assets/images/items/tuna.png';
+
+    if (name.contains('bread')) return 'assets/images/items/bread.png';
+    if (name.contains('bagel')) return 'assets/images/items/bagel.jpg';
+    if (name.contains('croissant')) return 'assets/images/items/croissant.jpg';
+    if (name.contains('cake')) return 'assets/images/items/cake.jpg';
+
+    if (name.contains('juice')) return 'assets/images/items/juice.png';
+
+    // Everything else falls back to the overall category image
+    return categoryImagePath(category);
   }
 }

@@ -22,8 +22,6 @@ class FoodCard extends StatelessWidget {
     final status = item.expiryStatus;
     final statusColor = ExpiryHelper.statusColor(status);
     final tint = AppTheme.categoryTint(item.category);
-    final accent = AppTheme.categoryAccent(item.category);
-    final icon = AppTheme.categoryIcon(item.category);
     final isExpired = status == ExpiryStatus.expired;
     final dateText = DateFormat('MMM dd').format(item.expiryDate);
 
@@ -39,52 +37,61 @@ class FoodCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ─── Top colored section with icon ───
+            // ─── Top image section ───
             Expanded(
               flex: 5,
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: isExpired ? const Color(0xFFF5F3F7) : tint,
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(20),
+              child: Stack(
+                children: [
+                  // Background with subtle tint
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: tint.withOpacity(0.15),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(20),
+                      ),
+                    ),
                   ),
-                ),
-                child: Stack(
-                  children: [
-                    // Category icon
-                    Center(
-                      child: Icon(
-                        icon,
-                        size: 40,
-                        color: isExpired
-                            ? AppTheme.textHint
-                            : accent,
-                      ),
-                    ),
-                    // Quantity badge (top-right)
-                    Positioned(
-                      top: 10,
-                      right: 10,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withAlpha(200),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          'x${item.quantity}',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: isExpired ? AppTheme.textLight : AppTheme.textDark,
+                  // Centered Item Image
+                  Positioned.fill(
+                    child: isExpired
+                        ? ColorFiltered(
+                            colorFilter: const ColorFilter.mode(
+                              Colors.grey,
+                              BlendMode.saturation,
+                            ),
+                            child: Image.asset(
+                              AppTheme.itemImagePath(item.name, item.category),
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : Image.asset(
+                            AppTheme.itemImagePath(item.name, item.category),
+                            fit: BoxFit.cover,
                           ),
+                  ),
+                  // Quantity badge (top-right)
+                  Positioned(
+                    top: 10,
+                    right: 10,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        'x${item.quantity}',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          color: AppTheme.textDark,
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
 
