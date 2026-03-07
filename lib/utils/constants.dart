@@ -14,25 +14,15 @@ class AppConstants {
     'Dairy',
     'Meat & Poultry',
     'Seafood',
-    'Frozen',
-    'Canned Goods',
-    'Condiments',
-    'Grains & Pasta',
-    'Other',
   ];
 
   static const Map<String, List<String>> categoryItems = {
-    'Fruits': ['Apple', 'Banana', 'Orange', 'Strawberry', 'Grape', 'Mango', 'Watermelon', 'Pineapple', 'Lemon', 'Peach', 'Kiwi'],
+    'Fruits': ['Apple', 'Banana', 'Orange', 'Strawberry', 'Grape', 'Mango', 'Watermelon', 'Pineapple', 'Lemon', 'Peach', 'Kiwi', 'Avocado'],
     'Vegetables': ['Tomato', 'Potato', 'Onion', 'Carrot', 'Cucumber', 'Bell Pepper', 'Broccoli', 'Spinach', 'Lettuce', 'Garlic', 'Mushroom', 'Cabbage'],
     'Dairy': ['Milk', 'Cheese', 'Yogurt', 'Butter', 'Cream', 'Eggs'],
     'Meat & Poultry': ['Chicken Breast', 'Beef', 'Pork', 'Turkey', 'Lamb', 'Sausage', 'Bacon'],
     'Seafood': ['Salmon', 'Tuna', 'Shrimp', 'Cod', 'Crab', 'Tilapia'],
     'Bakery': ['Bread', 'Bagels', 'Croissants', 'Muffins', 'Cake'],
-    'Frozen': ['Ice Cream', 'Frozen Vegetables', 'Pizza', 'Waffles'],
-    'Canned Goods': ['Soup', 'Beans', 'Corn', 'Tomato Sauce', 'Tuna'],
-    'Condiments': ['Ketchup', 'Mustard', 'Mayo', 'Soy Sauce', 'Hot Sauce'],
-    'Grains & Pasta': ['Rice', 'Spaghetti', 'Oats', 'Quinoa', 'Flour'],
-    'Other': [],
   };
 
   // Expiry Thresholds (in days)

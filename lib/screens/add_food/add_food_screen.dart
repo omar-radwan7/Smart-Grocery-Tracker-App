@@ -117,6 +117,7 @@ class _AddFoodScreenState extends State<AddFoodScreen>
       category: _selectedCategory,
       quantity: int.tryParse(_quantityController.text.trim()) ?? 1,
       expiryDate: _expiryDate,
+      imageUrl: AppTheme.itemImagePath(_nameController.text.trim(), _selectedCategory),
       createdAt: _isEditing ? widget.existingItem!.createdAt : DateTime.now(),
     );
 
@@ -127,9 +128,10 @@ class _AddFoodScreenState extends State<AddFoodScreen>
       success = await foodProvider.addFoodItem(uid, item);
     }
 
+    if (!mounted) return;
     setState(() => _isSubmitting = false);
 
-    if (success && mounted) {
+    if (success) {
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -139,6 +141,57 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                 : '${item.name} added successfully',
           ),
           backgroundColor: AppTheme.primaryGreen,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<void> _handleDelete() async {
+    final authProvider = context.read<AuthProvider>();
+    final foodProvider = context.read<FoodProvider>();
+    final uid = authProvider.user!.uid;
+    final item = widget.existingItem!;
+
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete Food Item'),
+        content: Text('Are you sure you want to delete "${item.name}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel', style: TextStyle(color: AppTheme.textMedium)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Delete', style: TextStyle(color: AppTheme.expiredRed)),
+          ),
+        ],
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        backgroundColor: Colors.white,
+      ),
+    );
+
+    if (confirm != true) return;
+
+    if (!mounted) return;
+    setState(() => _isSubmitting = true);
+
+    final success = await foodProvider.deleteFoodItem(uid, item.id);
+
+    if (!mounted) return;
+    setState(() => _isSubmitting = false);
+
+    if (success) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${widget.existingItem!.name} deleted'),
+          backgroundColor: AppTheme.textDark,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
@@ -430,6 +483,29 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                             ),
                     ),
                   ),
+                  if (_isEditing) ...[
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      height: 54,
+                      child: OutlinedButton(
+                        onPressed: _isSubmitting ? null : _handleDelete,
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppTheme.expiredRed,
+                          side: const BorderSide(color: AppTheme.expiredRed, width: 1.5),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        child: const Text(
+                          'Delete Item',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 20),
                 ],
               ),

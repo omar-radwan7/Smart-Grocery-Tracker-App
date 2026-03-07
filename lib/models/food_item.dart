@@ -32,7 +32,7 @@ class FoodItem {
     return FoodItem(
       id: documentId,
       name: map['name'] ?? '',
-      category: map['category'] ?? 'Other',
+      category: map['category'] ?? 'Fruits',
       quantity: map['quantity'] ?? 1,
       expiryDate: (map['expiryDate'] as Timestamp).toDate(),
       imageUrl: map['imageUrl'],

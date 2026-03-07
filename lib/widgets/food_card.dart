@@ -54,21 +54,19 @@ class FoodCard extends StatelessWidget {
                   ),
                   // Centered Item Image
                   Positioned.fill(
-                    child: isExpired
-                        ? ColorFiltered(
-                            colorFilter: const ColorFilter.mode(
-                              Colors.grey,
-                              BlendMode.saturation,
-                            ),
-                            child: Image.asset(
-                              AppTheme.itemImagePath(item.name, item.category),
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : Image.asset(
-                            AppTheme.itemImagePath(item.name, item.category),
-                            fit: BoxFit.cover,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Image.asset(
+                          AppTheme.itemImagePath(item.name, item.category),
+                          fit: BoxFit.cover,
+                        ),
+                        if (isExpired)
+                          Container(
+                            color: Colors.white.withAlpha(160), // Fades the image to indicate it is expired
                           ),
+                      ],
+                    ),
                   ),
                   // Quantity badge (top-right)
                   Positioned(

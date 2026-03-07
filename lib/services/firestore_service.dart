@@ -14,6 +14,14 @@ class FirestoreService {
         .collection(AppConstants.foodItemsCollection);
   }
 
+  /// Updates the user's email document in the users collection.
+  Future<void> updateUserEmail(String uid, String email) async {
+    await _firestore
+        .collection(AppConstants.usersCollection)
+        .doc(uid)
+        .set({'email': email}, SetOptions(merge: true));
+  }
+
   /// Streams all food items for the given user, ordered by expiry date.
   Stream<List<FoodItem>> streamFoodItems(String uid) {
     return _foodItemsRef(uid)

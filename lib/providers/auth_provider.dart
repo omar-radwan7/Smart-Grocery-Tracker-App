@@ -2,10 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_grocery_tracker/services/auth_service.dart'
     show AuthService, GoogleSignInCancelledException;
+import 'package:smart_grocery_tracker/services/firestore_service.dart';
 
 /// Provider managing authentication state.
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService = AuthService();
+  final FirestoreService _firestoreService = FirestoreService();
 
   User? _user;
   bool _isLoading = false;
@@ -118,6 +120,14 @@ class AuthProvider extends ChangeNotifier {
       _setLoading(true);
       _setError(null);
       await _authService.updateEmail(newEmail, password);
+      
+      // Update the user's email document stored in Firestore
+      if (_user != null) {
+        await _firestoreService.updateUserEmail(_user!.uid, newEmail);
+        // Refresh the local user state
+        _user = _authService.currentUser;
+      }
+      
       _setLoading(false);
       return true;
     } catch (e) {

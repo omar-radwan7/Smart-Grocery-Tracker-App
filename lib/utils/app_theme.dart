@@ -172,10 +172,6 @@ class AppTheme {
       case 'Bakery': return tintOrange;
       case 'Beverages': return tintBrown;
       case 'Snacks': return tintYellow;
-      case 'Frozen': return tintIndigo;
-      case 'Canned Goods': return tintTeal;
-      case 'Condiments': return tintPink;
-      case 'Grains & Pasta': return tintPurple;
       default: return tintGreen;
     }
   }
@@ -190,10 +186,6 @@ class AppTheme {
       case 'Bakery': return accentOrangeIcon;
       case 'Beverages': return accentBrownIcon;
       case 'Snacks': return accentYellowIcon;
-      case 'Frozen': return accentIndigoIcon;
-      case 'Canned Goods': return accentTealIcon;
-      case 'Condiments': return accentPinkIcon;
-      case 'Grains & Pasta': return accentPurpleIcon;
       default: return accentGreenIcon;
     }
   }
@@ -206,10 +198,6 @@ class AppTheme {
       case 'Meat & Poultry': return 'assets/images/items/beef.png';
       case 'Seafood': return 'assets/images/items/salmon.png'; // Will need this image
       case 'Bakery': return 'assets/images/items/bakery.png'; // Will need this image
-      case 'Frozen': return 'assets/images/items/frozen.png'; // Will need this image
-      case 'Canned Goods': return 'assets/images/items/canned.png'; // Will need this image
-      case 'Condiments': return 'assets/images/items/condiments.png'; // Will need this image
-      case 'Grains & Pasta': return 'assets/images/items/grains.png'; // Will need this image
       default: return 'assets/images/items/fruits.png'; // Fallback
     }
   }
@@ -223,6 +211,14 @@ class AppTheme {
     if (name.contains('orange')) return 'assets/images/items/orange.jpg';
     if (name.contains('grape')) return 'assets/images/items/grapes.jpg';
     if (name.contains('strawberr')) return 'assets/images/items/strawberry.jpg';
+    if (name.contains('avocado')) return 'assets/images/items/avocado.png';
+    if (name.contains('mango')) return 'assets/images/items/mango.png';
+    if (name.contains('watermelon')) return 'assets/images/items/watermelon.png';
+    if (name.contains('pineapple')) return 'assets/images/items/pineapple.png';
+    if (name.contains('lemon')) return 'assets/images/items/lemon.png';
+    if (name.contains('peach')) return 'assets/images/items/peach.png';
+    if (name.contains('kiwi')) return 'assets/images/items/kiwi.png';
+    
     if (name.contains('tomato')) return 'assets/images/items/tomato.png';
     if (name.contains('carrot')) return 'assets/images/items/carrot.jpg';
     if (name.contains('onion')) return 'assets/images/items/onion.png';
