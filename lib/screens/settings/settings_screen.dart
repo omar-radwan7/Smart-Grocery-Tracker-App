@@ -118,13 +118,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _buildSettingsCard(
                 children: [
                   _buildSettingsTile(
-                    icon: Icons.email_outlined,
-                    title: 'Change Email',
-                    subtitle: user?.email ?? '',
-                    onTap: () => _showChangeEmailDialog(context),
-                  ),
-                  const Divider(height: 1, indent: 52),
-                  _buildSettingsTile(
                     icon: Icons.lock_outline,
                     title: 'Change Password',
                     subtitle: '••••••••',
@@ -165,20 +158,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               const SizedBox(height: 28),
 
-              // ───── About Section ─────
-              _buildSectionHeader('About'),
-              const SizedBox(height: 12),
-              _buildSettingsCard(
-                children: [
-                  _buildSettingsTile(
-                    icon: Icons.info_outline,
-                    title: 'App Version',
-                    subtitle: '1.0.0',
-                    onTap: () {},
-                  ),
-                ],
-              ),
-              const SizedBox(height: 28),
+
 
               // ───── Sign Out ─────
               SizedBox(
@@ -331,110 +311,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void _showChangeEmailDialog(BuildContext context) {
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Change Email'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: emailController,
-              keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(
-                hintText: 'New email address',
-                prefixIcon: Icon(Icons.email_outlined),
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                hintText: 'Current password',
-                prefixIcon: Icon(Icons.lock_outline),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              if (emailController.text.trim().isNotEmpty &&
-                  passwordController.text.isNotEmpty) {
-                final success = await context.read<AuthProvider>().updateEmail(
-                      emailController.text.trim(),
-                      passwordController.text,
-                    );
-                if (context.mounted) {
-                  Navigator.pop(context);
-                  if (success) {
-                    _showSuccessSnackbar(
-                        'Verification email sent to ${emailController.text.trim()}');
-                  } else {
-                    _showErrorSnackbar(
-                        context.read<AuthProvider>().error ??
-                            'Failed to update email');
-                  }
-                }
-              }
-            },
-            child: const Text('Update'),
-          ),
-        ],
-      ),
-    );
-  }
 
   void _showChangePasswordDialog(BuildContext context) {
-    final currentController = TextEditingController();
-    final newController = TextEditingController();
-    final confirmController = TextEditingController();
-
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Change Password'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: currentController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                hintText: 'Current password',
-                prefixIcon: Icon(Icons.lock_outline),
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: newController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                hintText: 'New password',
-                prefixIcon: Icon(Icons.lock_outline),
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: confirmController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                hintText: 'Confirm new password',
-                prefixIcon: Icon(Icons.lock_outline),
-              ),
-            ),
-          ],
+        title: const Text('Reset Password'),
+        content: const Text(
+          'We will send a password reset link to your email. Click the link to set your new password, and you will be logged out to log back in.',
         ),
         actions: [
           TextButton(
@@ -443,32 +329,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           ElevatedButton(
             onPressed: () async {
-              if (newController.text != confirmController.text) {
-                _showErrorSnackbar('Passwords do not match');
-                return;
-              }
-              if (newController.text.length < 6) {
-                _showErrorSnackbar(
-                    'Password must be at least 6 characters');
+              final email = context.read<AuthProvider>().user?.email;
+              if (email == null) {
+                _showErrorSnackbar('No email associated with this account');
                 return;
               }
               final success =
-                  await context.read<AuthProvider>().updatePassword(
-                        currentController.text,
-                        newController.text,
-                      );
+                  await context.read<AuthProvider>().sendPasswordReset(email);
               if (context.mounted) {
                 Navigator.pop(context);
                 if (success) {
-                  _showSuccessSnackbar('Password updated successfully');
+                  _showSuccessSnackbar(
+                      'Reset email sent. Please check your inbox.');
+                  await context.read<AuthProvider>().signOut();
                 } else {
                   _showErrorSnackbar(
                       context.read<AuthProvider>().error ??
-                          'Failed to update password');
+                          'Failed to send reset email');
                 }
               }
             },
-            child: const Text('Update'),
+            child: const Text('Send Email'),
           ),
         ],
       ),

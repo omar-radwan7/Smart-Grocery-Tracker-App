@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_grocery_tracker/services/auth_service.dart'
@@ -12,6 +13,7 @@ class AuthProvider extends ChangeNotifier {
   User? _user;
   bool _isLoading = false;
   String? _error;
+  Timer? _authCheckTimer;
 
   User? get user => _user;
   bool get isLoading => _isLoading;
@@ -22,8 +24,47 @@ class AuthProvider extends ChangeNotifier {
     _authService.authStateChanges.listen((User? user) {
       _user = user;
       notifyListeners();
+      
+      if (user != null) {
+        _startAuthCheck();
+      } else {
+        _stopAuthCheck();
+      }
     });
   }
+
+  void _startAuthCheck() {
+    _authCheckTimer?.cancel();
+    _authCheckTimer = Timer.periodic(const Duration(seconds: 4), (_) async {
+      try {
+        final currentUser = _authService.currentUser;
+        if (currentUser != null) {
+          await currentUser.reload();
+        } else {
+          await signOut();
+        }
+      } catch (e) {
+        final errorString = e.toString().toLowerCase();
+        // Ignore network-related issues so we don't accidentally log out users trying to use the app in offline mode.
+        if (errorString.contains('network') || 
+            errorString.contains('unavailable') || 
+            errorString.contains('timeout') ||
+            errorString.contains('too-many-requests')) {
+          return;
+        }
+        
+        // If reload() fails for any other reason (e.g. user disabled, rejected, deleted, or token expired),
+        // we forcefully log the user out to lock down the app's functionality immediately.
+        await signOut();
+      }
+    });
+  }
+
+  void _stopAuthCheck() {
+    _authCheckTimer?.cancel();
+    _authCheckTimer = null;
+  }
+
 
   void _setLoading(bool value) {
     _isLoading = value;
@@ -46,6 +87,13 @@ class AuthProvider extends ChangeNotifier {
       _setLoading(true);
       _setError(null);
       await _authService.signInWithEmail(email, password);
+      
+      // Force an immediate token refresh to bust any stale auth caches
+      // This ensures we get the most up-to-date state from Firebase's servers directly
+      if (_authService.currentUser != null) {
+        await _authService.currentUser!.getIdToken(true);
+      }
+      
       _setLoading(false);
       return true;
     } on FirebaseAuthException catch (e) {
@@ -88,6 +136,13 @@ class AuthProvider extends ChangeNotifier {
       _setLoading(true);
       _setError(null);
       await _authService.signInWithGoogle();
+      
+      // Force an immediate token refresh to bust any stale auth caches
+      // This ensures we get the most up-to-date state from Firebase's servers directly
+      if (_authService.currentUser != null) {
+        await _authService.currentUser!.getIdToken(true);
+      }
+      
       _setLoading(false);
       return true;
     } on GoogleSignInCancelledException {
@@ -137,6 +192,21 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  /// Send password reset email.
+  Future<bool> sendPasswordReset(String email) async {
+    try {
+      _setLoading(true);
+      _setError(null);
+      await _authService.sendPasswordReset(email);
+      _setLoading(false);
+      return true;
+    } catch (e) {
+      _setLoading(false);
+      _setError(_parseFirebaseError(e));
+      return false;
+    }
+  }
+
   /// Update password.
   Future<bool> updatePassword(
     String currentPassword,
@@ -174,14 +244,16 @@ class AuthProvider extends ChangeNotifier {
 
   /// Parse Firebase errors into user-friendly messages.
   String _parseFirebaseError(dynamic e) {
+    String errorString = e.toString().toLowerCase();
+    
     if (e is FirebaseAuthException) {
-      return e.message ?? 'Authentication error';
+      errorString = '${e.code} ${e.message}'.toLowerCase();
     }
-    final errorString = e.toString();
-    if (errorString.contains('user-not-found')) {
-      return 'No account found with this email.';
-    } else if (errorString.contains('wrong-password')) {
-      return 'Incorrect password.';
+
+    if (errorString.contains('user-not-found') || errorString.contains('invalid-credential') || errorString.contains('wrong-password')) {
+      return 'Incorrect email or password.';
+    } else if (errorString.contains('user-disabled')) {
+      return 'This account has been disabled by an administrator.';
     } else if (errorString.contains('email-already-in-use')) {
       return 'An account already exists with this email.';
     } else if (errorString.contains('weak-password')) {
@@ -192,6 +264,10 @@ class AuthProvider extends ChangeNotifier {
       return 'Too many attempts. Please try again later.';
     } else if (errorString.contains('network-request-failed')) {
       return 'Network error. Check your connection.';
+    }
+    
+    if (e is FirebaseAuthException && e.message != null) {
+      return e.message!;
     }
     return 'An unexpected error occurred. Please try again.';
   }
