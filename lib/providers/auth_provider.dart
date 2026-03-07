@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_grocery_tracker/services/auth_service.dart'
     show AuthService, GoogleSignInCancelledException;
@@ -9,6 +10,7 @@ import 'package:smart_grocery_tracker/services/firestore_service.dart';
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService = AuthService();
   final FirestoreService _firestoreService = FirestoreService();
+  final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
 
   User? _user;
   bool _isLoading = false;
@@ -92,6 +94,8 @@ class AuthProvider extends ChangeNotifier {
       // This ensures we get the most up-to-date state from Firebase's servers directly
       if (_authService.currentUser != null) {
         await _authService.currentUser!.getIdToken(true);
+        await _analytics.setUserId(id: _authService.currentUser!.uid);
+        await _analytics.logLogin(loginMethod: 'email');
       }
       
       _setLoading(false);
@@ -117,6 +121,12 @@ class AuthProvider extends ChangeNotifier {
       _setLoading(true);
       _setError(null);
       await _authService.signUpWithEmail(email, password, displayName);
+      
+      if (_authService.currentUser != null) {
+        await _analytics.setUserId(id: _authService.currentUser!.uid);
+        await _analytics.logSignUp(signUpMethod: 'email');
+      }
+      
       _setLoading(false);
       return true;
     } on FirebaseAuthException catch (e) {
@@ -141,6 +151,8 @@ class AuthProvider extends ChangeNotifier {
       // This ensures we get the most up-to-date state from Firebase's servers directly
       if (_authService.currentUser != null) {
         await _authService.currentUser!.getIdToken(true);
+        await _analytics.setUserId(id: _authService.currentUser!.uid);
+        await _analytics.logLogin(loginMethod: 'google');
       }
       
       _setLoading(false);
@@ -163,6 +175,8 @@ class AuthProvider extends ChangeNotifier {
   /// Sign out.
   Future<void> signOut() async {
     try {
+      await _analytics.logEvent(name: 'logout');
+      await _analytics.setUserId(id: null);
       await _authService.signOut();
     } catch (e) {
       _setError(_parseFirebaseError(e));
