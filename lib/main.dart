@@ -98,17 +98,10 @@ class _SplashScreenState extends State<_SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              width: 90,
-              height: 90,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppTheme.heroStart, AppTheme.heroEnd],
-                ),
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: AppTheme.heroShadow,
-              ),
-              child: const Icon(Icons.eco, size: 44, color: Colors.white),
+            Image.asset(
+              'assets/images/logo.png',
+              height: 160,
+              fit: BoxFit.contain,
             ),
             const SizedBox(height: 24),
             const Text('Smart Grocery',

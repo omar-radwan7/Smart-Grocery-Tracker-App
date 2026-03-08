@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  smart_grocery_tracker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8085"
+    container_name: smart_grocery_web

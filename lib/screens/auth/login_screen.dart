@@ -80,16 +80,10 @@ class _LoginScreenState extends State<LoginScreen>
                   const SizedBox(height: 48),
                   // Logo
                   Center(
-                    child: Container(
-                      width: 72,
-                      height: 72,
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                            colors: [AppTheme.heroStart, AppTheme.heroEnd]),
-                        borderRadius: BorderRadius.circular(22),
-                        boxShadow: AppTheme.heroShadow,
-                      ),
-                      child: const Icon(Icons.eco, size: 36, color: Colors.white),
+                    child: Image.asset(
+                      'assets/images/logo.png',
+                      height: 140,
+                      fit: BoxFit.contain,
                     ),
                   ),
                   const SizedBox(height: 32),
