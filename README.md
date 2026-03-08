@@ -40,6 +40,44 @@ Packages Used
 - image_picker: Camera and gallery access for food photos
 - cached_network_image: Efficient loading and caching of images from Firebase Storage
 - uuid: Unique identifier generation for uploaded images
+sign_i![Sign in](https://github.com/user-attachments/assets/bdfa7926-9f15-414e-bd1a-4e570d64840a) 
+  Enter your email and password to access your account, or use "Continue with Google" to sign in. Tap "Sign Up" to create a new account.
+  
+  [signing in with google screen](https://github.com/user-attachments/assets/53f2c423-bef9-4390-8a39-69af744a141a)
+Select a Google account to continue signing in with Google. Shows the account name and email and the option to add another account.
+
+![Home page screen](https://github.com/user-attachments/assets/4458d58d-df1a-47c9-9e82-48f8a36941e5)
+  Dashboard showing a greeting, a summary card with counts (Fresh / Expiring / Expired) and a progress indicator. Use category chips to filter items or the search icon to find items.
+
+- home_grid![scroll items screen](https://github.com/user-attachments/assets/b97b6cdb-6d37-4a6b-b129-131f4c939889) 
+  Scrollable grid of grocery item cards showing an image, name, category, expiry date, and quantity badge. Tap a card to view or edit the item.
+
+- add_item_form![add item screen](https://github.com/user-attachments/assets/1c3c280d-528e-4d5a-a04f-43ee5fddcae6)
+ (image5)  
+  Form to add a new item: choose category and food name, set quantity, and pick an expiry date. Tap "Add Item" to save.
+
+- date_picker![food expiry date screen](https://github.com/user-attachments/assets/271f8f3c-3a39-4df0-94af-35f1677e16d6)(image6)  
+  Calendar modal for selecting an expiry date. Use "Cancel" to abort or "OK" to confirm the date.
+
+- category_picker![food expiry date screen](https://github.com/user-attachments/assets/36ec7979-408b-45fe-b857-96fff884209a)
+ (image7)  
+  Dropdown showing available categories (Fruits, Vegetables, Dairy, Meat & Poultry, Seafood). Select one to scope food-name options and organize the item.
+
+- edit_item![Edit item screen](https://github.com/user-attachments/assets/01bee60d-e9ef-4bc7-8cef-1bf9217ec626)
+ (image8)  
+  Pre-filled form to update item details. Use "Update Item" to save changes or "Delete Item" to remove the item.
+
+- home_filtered_vegetables![Item filter screen](https://github.com/user-attachments/assets/325f0351-4ec5-4c43-ae5f-8bc2920c0f30)
+ (image9)  
+  Home view filtered by a category (example: Vegetables), showing only items that belong to the selected category.
+
+- settings![user profile](https://github.com/user-attachments/assets/6cdc3dec-ebe2-44f5-b05c-becf65d6e86d)
+ (image10)  
+  Settings page with a profile card (editable avatar and name/email), account actions like change password and language preference, and a "Sign Out" button.
+
+- create_account![sign up](https://github.com/user-attachments/assets/b71e9237-442a-44ad-a003-68c40f22d597)
+ (image11)  
+  Registration screen to enter full name, email, password and confirm password. Tap "Create Account" or continue with Google to register.
 
 Project Structure
 
