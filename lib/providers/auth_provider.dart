@@ -120,12 +120,11 @@ class AuthProvider extends ChangeNotifier {
       _setLoading(true);
       _setError(null);
       await _authService.signUpWithEmail(email, password, displayName);
-      
+      _user = _authService.currentUser;
       if (_authService.currentUser != null) {
         await _analytics.setUserId(id: _authService.currentUser!.uid);
         await _analytics.logSignUp(signUpMethod: 'email');
       }
-      
       _setLoading(false);
       return true;
     } on FirebaseAuthException catch (e) {
