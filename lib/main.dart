@@ -11,6 +11,7 @@ import 'package:smart_grocery_tracker/screens/auth/login_screen.dart';
 import 'package:smart_grocery_tracker/utils/app_theme.dart';
 import 'firebase_options.dart';
 
+/// App entry point that initializes Firebase and bootstraps the widget tree.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -31,6 +32,7 @@ void main() async {
   runApp(const SmartGroceryApp());
 }
 
+/// Root widget that wires up global providers and navigation.
 class SmartGroceryApp extends StatelessWidget {
   const SmartGroceryApp({super.key});
 
@@ -56,6 +58,7 @@ class SmartGroceryApp extends StatelessWidget {
   }
 }
 
+/// Decides whether to show the authenticated shell or the auth flow.
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
 

@@ -53,13 +53,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            // ─── Top bar ───
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                 child: Row(
                   children: [
-                    // Avatar circle
                     Container(
                       width: 44,
                       height: 44,
@@ -119,7 +117,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
 
-            // ─── Search (animated) ───
             if (_showSearch)
               SliverToBoxAdapter(
                 child: Padding(
@@ -146,7 +143,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
             const SliverToBoxAdapter(child: SizedBox(height: 20)),
 
-            // ─── Hero summary card ───
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -156,7 +152,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
             const SliverToBoxAdapter(child: SizedBox(height: 20)),
 
-            // ─── Category filter ───
             SliverToBoxAdapter(
               child: CategoryFilterBar(
                 selectedCategory: food.selectedCategory,
@@ -166,7 +161,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
             const SliverToBoxAdapter(child: SizedBox(height: 8)),
 
-            // ─── Section header ───
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(22, 8, 22, 4),
@@ -195,7 +189,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
             const SliverToBoxAdapter(child: SizedBox(height: 4)),
 
-            // ─── Food grid or empty state ───
             if (food.isLoading)
               const SliverFillRemaining(
                 child: Center(
@@ -214,7 +207,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  // ─── Hero card ───
   Widget _buildHeroCard(FoodProvider food) {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -231,7 +223,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         children: [
           Row(
             children: [
-              // Total items circle
               Container(
                 width: 74,
                 height: 74,
@@ -252,7 +243,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               ),
               const SizedBox(width: 20),
-              // Stats column
               Expanded(
                 child: Column(
                   children: [

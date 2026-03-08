@@ -6,7 +6,7 @@ import 'package:smart_grocery_tracker/services/auth_service.dart'
     show AuthService, GoogleSignInCancelledException;
 import 'package:smart_grocery_tracker/services/firestore_service.dart';
 
-/// Provider managing authentication state.
+/// Central auth state for the app: sign-in, sign-up, and profile updates.
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService = AuthService();
   final FirestoreService _firestoreService = FirestoreService();
@@ -22,6 +22,7 @@ class AuthProvider extends ChangeNotifier {
   String? get error => _error;
   bool get isAuthenticated => _user != null;
 
+  /// Listen to Firebase auth changes and start/stop periodic checks.
   AuthProvider() {
     _authService.authStateChanges.listen((User? user) {
       _user = user;
@@ -35,6 +36,7 @@ class AuthProvider extends ChangeNotifier {
     });
   }
 
+  // Periodically verify the auth session and sign out on non-network failures.
   void _startAuthCheck() {
     _authCheckTimer?.cancel();
     _authCheckTimer = Timer.periodic(const Duration(seconds: 4), (_) async {
@@ -47,17 +49,14 @@ class AuthProvider extends ChangeNotifier {
         }
       } catch (e) {
         final errorString = e.toString().toLowerCase();
-        // Ignore network-related issues so we don't accidentally log out users trying to use the app in offline mode.
-        if (errorString.contains('network') || 
-            errorString.contains('unavailable') || 
+        final isNetworkIssue = errorString.contains('network') ||
+            errorString.contains('unavailable') ||
             errorString.contains('timeout') ||
-            errorString.contains('too-many-requests')) {
-          return;
+            errorString.contains('too-many-requests');
+
+        if (!isNetworkIssue) {
+          await signOut();
         }
-        
-        // If reload() fails for any other reason (e.g. user disabled, rejected, deleted, or token expired),
-        // we forcefully log the user out to lock down the app's functionality immediately.
-        await signOut();
       }
     });
   }
@@ -68,30 +67,30 @@ class AuthProvider extends ChangeNotifier {
   }
 
 
+  /// Toggle the global auth loading flag and notify listeners.
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
   }
 
+  /// Store a user-facing error message and notify listeners.
   void _setError(String? error) {
     _error = error;
     notifyListeners();
   }
 
+  /// Clear any visible auth error.
   void clearError() {
     _error = null;
     notifyListeners();
   }
 
-  /// Sign in with email/password.
+  /// Email/password sign-in used by the login form.
   Future<bool> signInWithEmail(String email, String password) async {
     try {
       _setLoading(true);
       _setError(null);
       await _authService.signInWithEmail(email, password);
-      
-      // Force an immediate token refresh to bust any stale auth caches
-      // This ensures we get the most up-to-date state from Firebase's servers directly
       if (_authService.currentUser != null) {
         await _authService.currentUser!.getIdToken(true);
         await _analytics.setUserId(id: _authService.currentUser!.uid);
@@ -111,7 +110,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  /// Sign up with email/password.
+  /// Email/password sign-up used by the registration form.
   Future<bool> signUpWithEmail(
     String email,
     String password,
@@ -140,15 +139,12 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  /// Sign in with Google.
+  /// Google OAuth sign-in flow.
   Future<bool> signInWithGoogle() async {
     try {
       _setLoading(true);
       _setError(null);
       await _authService.signInWithGoogle();
-      
-      // Force an immediate token refresh to bust any stale auth caches
-      // This ensures we get the most up-to-date state from Firebase's servers directly
       if (_authService.currentUser != null) {
         await _authService.currentUser!.getIdToken(true);
         await _analytics.setUserId(id: _authService.currentUser!.uid);
@@ -172,7 +168,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  /// Sign out.
+  /// Sign out the current user and clear analytics identity.
   Future<void> signOut() async {
     try {
       await _analytics.logEvent(name: 'logout');
@@ -183,17 +179,14 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  /// Update email.
+  /// Change the user's email in Firebase Auth and Firestore.
   Future<bool> updateEmail(String newEmail, String password) async {
     try {
       _setLoading(true);
       _setError(null);
       await _authService.updateEmail(newEmail, password);
-      
-      // Update the user's email document stored in Firestore
       if (_user != null) {
         await _firestoreService.updateUserEmail(_user!.uid, newEmail);
-        // Refresh the local user state
         _user = _authService.currentUser;
       }
       
@@ -206,7 +199,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  /// Send password reset email.
+  /// Trigger a password reset email for the given address.
   Future<bool> sendPasswordReset(String email) async {
     try {
       _setLoading(true);
@@ -221,7 +214,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  /// Update password.
+  /// Change the user's password after re-authenticating.
   Future<bool> updatePassword(
     String currentPassword,
     String newPassword,
@@ -239,13 +232,12 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  /// Update display name.
+  /// Update the user's display name used across the UI.
   Future<bool> updateDisplayName(String name) async {
     try {
       _setLoading(true);
       _setError(null);
       await _authService.updateDisplayName(name);
-      // Reload user to get updated name
       _user = _authService.currentUser;
       _setLoading(false);
       return true;

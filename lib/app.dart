@@ -4,6 +4,7 @@ import 'package:smart_grocery_tracker/screens/dashboard/dashboard_screen.dart';
 import 'package:smart_grocery_tracker/screens/settings/settings_screen.dart';
 import 'package:smart_grocery_tracker/utils/app_theme.dart';
 
+/// Top-level shell with bottom navigation between dashboard and settings.
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
 
@@ -14,6 +15,7 @@ class AppShell extends StatefulWidget {
 class _AppShellState extends State<AppShell> {
   int _currentIndex = 0;
 
+  /// Destinations shown in the bottom navigation bar.
   final List<Widget> _screens = const [
     DashboardScreen(),
     SettingsScreen(),
@@ -41,7 +43,6 @@ class _AppShellState extends State<AppShell> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _navItem(0, Icons.home_outlined, Icons.home_rounded, 'Home'),
-                // Center FAB
                 GestureDetector(
                   onTap: () => Navigator.push(context,
                       MaterialPageRoute(builder: (_) => const AddFoodScreen())),
