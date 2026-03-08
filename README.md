@@ -167,13 +167,6 @@ flutter pub get
 flutter run
 Optional: Run with Docker
 
-Run the application without installing Flutter:
-
-docker-compose up --build
-
-Then open:
-
-http://localhost:8085
 Test Scenarios
 
 To quickly test expiry states:
