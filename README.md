@@ -127,32 +127,8 @@ cached_network_image – Efficient image caching
 uuid – Unique ID generation
 
 Project Structure
-lib/
- ├── main.dart
- ├── app.dart
- ├── models/
- │   └── food_item.dart
- ├── services/
- │   ├── activity_service.dart
- │   ├── auth_service.dart
- │   ├── firestore_service.dart
- │   └── storage_service.dart
- ├── providers/
- │   ├── auth_provider.dart
- │   └── food_provider.dart
- ├── screens/
- │   ├── auth/
- │   ├── dashboard/
- │   ├── add_food/
- │   └── settings/
- ├── widgets/
- │   ├── food_card.dart
- │   ├── expiry_badge.dart
- │   └── category_filter_bar.dart
- └── utils/
-     ├── constants.dart
-     ├── expiry_helper.dart
-     └── app_theme.dart
+![Screenshot_2026-03-08_16-53-34](https://github.com/user-attachments/assets/a3848fa8-fd61-4f07-8816-0e82dad1c5ed)
+
      
 Setup Instructions
 Prerequisites
