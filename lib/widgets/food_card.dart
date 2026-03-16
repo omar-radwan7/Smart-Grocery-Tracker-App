@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:smart_grocery_tracker/models/food_item.dart';
+import 'package:smart_grocery_tracker/providers/locale_provider.dart';
+import 'package:smart_grocery_tracker/utils/app_strings.dart';
 import 'package:smart_grocery_tracker/utils/app_theme.dart';
+import 'package:smart_grocery_tracker/utils/constants.dart';
 import 'package:smart_grocery_tracker/utils/expiry_helper.dart';
 
 /// Grid-style food card with colored header and clean layout.
@@ -19,15 +23,21 @@ class FoodCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = context.watch<LocaleProvider>().languageCode;
+    final s = AppStrings(lang);
     final status = item.expiryStatus;
     final statusColor = ExpiryHelper.statusColor(status);
     final tint = AppTheme.categoryTint(item.category);
     final isExpired = status == ExpiryStatus.expired;
     final dateText = DateFormat('MMM dd').format(item.expiryDate);
 
+    // Translated display names
+    final displayName = AppConstants.itemDisplay(item.name, lang);
+    final displayCategory = AppConstants.categoryDisplay(item.category, lang);
+
     return GestureDetector(
       onTap: onTap,
-      onLongPress: () => _showDeleteSheet(context),
+      onLongPress: () => _showDeleteSheet(context, s, displayName),
       child: Container(
         decoration: BoxDecoration(
           color: AppTheme.cardBg,
@@ -46,7 +56,7 @@ class FoodCard extends StatelessWidget {
                   Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: tint.withOpacity(0.15),
+                      color: tint.withAlpha(38),
                       borderRadius: const BorderRadius.vertical(
                         top: Radius.circular(20),
                       ),
@@ -63,7 +73,7 @@ class FoodCard extends StatelessWidget {
                         ),
                         if (isExpired)
                           Container(
-                            color: Colors.white.withAlpha(160), // Fades the image to indicate it is expired
+                            color: Colors.white.withAlpha(160),
                           ),
                       ],
                     ),
@@ -102,9 +112,9 @@ class FoodCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Name
+                    // Name (translated)
                     Text(
-                      item.name,
+                      displayName,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
@@ -115,9 +125,9 @@ class FoodCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    // Category
+                    // Category (translated)
                     Text(
-                      item.category,
+                      displayCategory,
                       style: const TextStyle(
                         fontSize: 11,
                         color: AppTheme.textLight,
@@ -170,7 +180,7 @@ class FoodCard extends StatelessWidget {
     );
   }
 
-  void _showDeleteSheet(BuildContext context) {
+  void _showDeleteSheet(BuildContext context, AppStrings s, String displayName) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -191,17 +201,12 @@ class FoodCard extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              'Delete "${item.name}"?',
+              '${s.get('deleteConfirm')} "$displayName"?',
               style: const TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.w700,
                 color: AppTheme.textDark,
               ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'This action cannot be undone.',
-              style: TextStyle(fontSize: 13, color: AppTheme.textLight),
             ),
             const SizedBox(height: 24),
             Row(
@@ -216,8 +221,8 @@ class FoodCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(AppTheme.rSm),
                       ),
                     ),
-                    child: const Text('Cancel',
-                        style: TextStyle(color: AppTheme.textMedium)),
+                    child: Text(s.get('cancel'),
+                        style: const TextStyle(color: AppTheme.textMedium)),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -234,7 +239,7 @@ class FoodCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(AppTheme.rSm),
                       ),
                     ),
-                    child: const Text('Delete'),
+                    child: Text(s.get('delete')),
                   ),
                 ),
               ],

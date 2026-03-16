@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:smart_grocery_tracker/models/food_item.dart';
 import 'package:smart_grocery_tracker/providers/auth_provider.dart';
 import 'package:smart_grocery_tracker/providers/food_provider.dart';
+import 'package:smart_grocery_tracker/providers/locale_provider.dart';
 import 'package:smart_grocery_tracker/screens/add_food/add_food_screen.dart';
+import 'package:smart_grocery_tracker/utils/app_strings.dart';
 import 'package:smart_grocery_tracker/utils/app_theme.dart';
 import 'package:smart_grocery_tracker/widgets/category_filter_bar.dart';
 import 'package:smart_grocery_tracker/widgets/food_card.dart';
@@ -46,6 +48,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
     final food = context.watch<FoodProvider>();
+    final lang = context.watch<LocaleProvider>().languageCode;
+    final s = AppStrings(lang);
     final name = (auth.user?.displayName ?? 'there').split(' ').first;
 
     return Scaffold(
@@ -82,7 +86,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Hello, $name',
+                            '${s.get('hello')}, $name',
                             style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
@@ -90,9 +94,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ),
                           ),
                           const SizedBox(height: 2),
-                          const Text(
-                            'Track your groceries',
-                            style: TextStyle(
+                          Text(
+                            s.get('trackGroceries'),
+                            style: const TextStyle(
                               fontSize: 13,
                               color: AppTheme.textLight,
                             ),
@@ -126,7 +130,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     onChanged: food.setSearchQuery,
                     style: const TextStyle(fontSize: 14),
                     decoration: InputDecoration(
-                      hintText: 'Search items...',
+                      hintText: s.get('searchItems'),
                       prefixIcon: const Icon(Icons.search, size: 20, color: AppTheme.textHint),
                       suffixIcon: _searchController.text.isNotEmpty
                           ? IconButton(
@@ -146,7 +150,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: _buildHeroCard(food),
+                child: _buildHeroCard(food, s),
               ),
             ),
 
@@ -166,9 +170,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 padding: const EdgeInsets.fromLTRB(22, 8, 22, 4),
                 child: Row(
                   children: [
-                    const Text(
-                      'Your Items',
-                      style: TextStyle(
+                    Text(
+                      s.get('yourItems'),
+                      style: const TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w700,
                         color: AppTheme.textDark,
@@ -176,7 +180,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                     const Spacer(),
                     Text(
-                      '${food.foodItems.length} items',
+                      '${food.foodItems.length} ${s.get('items')}',
                       style: const TextStyle(
                         fontSize: 13,
                         color: AppTheme.textLight,
@@ -196,9 +200,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               )
             else if (food.foodItems.isEmpty)
-              SliverFillRemaining(child: _buildEmpty(food))
+              SliverFillRemaining(child: _buildEmpty(food, s))
             else
-              _buildFoodGrid(food, auth),
+              _buildFoodGrid(food, auth, s),
 
             const SliverToBoxAdapter(child: SizedBox(height: 100)),
           ],
@@ -207,7 +211,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildHeroCard(FoodProvider food) {
+  Widget _buildHeroCard(FoodProvider food, AppStrings s) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -246,11 +250,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Expanded(
                 child: Column(
                   children: [
-                    _heroStat('Fresh', food.normalCount, AppTheme.freshGreen),
+                    _heroStat(s.get('fresh'), food.normalCount, AppTheme.freshGreen),
                     const SizedBox(height: 8),
-                    _heroStat('Expiring', food.expiringSoonCount, AppTheme.warningAmber),
+                    _heroStat(s.get('expiring'), food.expiringSoonCount, AppTheme.warningAmber),
                     const SizedBox(height: 8),
-                    _heroStat('Expired', food.expiredCount, AppTheme.expiredRed),
+                    _heroStat(s.get('expired'), food.expiredCount, AppTheme.expiredRed),
                   ],
                 ),
               ),
@@ -305,7 +309,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   // ─── 2-column grid ───
-  Widget _buildFoodGrid(FoodProvider food, AuthProvider auth) {
+  Widget _buildFoodGrid(FoodProvider food, AuthProvider auth, AppStrings s) {
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       sliver: SliverGrid(
@@ -325,7 +329,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 food.deleteFoodItem(auth.user!.uid, item.id);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('${item.name} removed'),
+                    content: Text('${item.name} ${s.get('removed')}'),
                     backgroundColor: AppTheme.textDark,
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(
@@ -343,7 +347,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   // ─── Empty state ───
-  Widget _buildEmpty(FoodProvider food) {
+  Widget _buildEmpty(FoodProvider food, AppStrings s) {
     final hasFilter = food.selectedCategory != null || food.searchQuery.isNotEmpty;
     return Center(
       child: Column(
@@ -361,7 +365,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           const SizedBox(height: 20),
           Text(
-            hasFilter ? 'No items match' : 'No items yet',
+            hasFilter ? s.get('noItemsMatch') : s.get('noItemsYet'),
             style: const TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w600,
@@ -370,7 +374,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           const SizedBox(height: 6),
           Text(
-            hasFilter ? 'Try a different filter' : 'Tap + to add your first item',
+            hasFilter ? s.get('tryDifferentFilter') : s.get('tapToAdd'),
             style: const TextStyle(fontSize: 13, color: AppTheme.textLight),
           ),
         ],

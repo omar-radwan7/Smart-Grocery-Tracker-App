@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:smart_grocery_tracker/providers/locale_provider.dart';
 import 'package:smart_grocery_tracker/screens/add_food/add_food_screen.dart';
 import 'package:smart_grocery_tracker/screens/dashboard/dashboard_screen.dart';
 import 'package:smart_grocery_tracker/screens/settings/settings_screen.dart';
+import 'package:smart_grocery_tracker/utils/app_strings.dart';
 import 'package:smart_grocery_tracker/utils/app_theme.dart';
 
 /// Top-level shell with bottom navigation between dashboard and settings.
@@ -23,6 +26,9 @@ class _AppShellState extends State<AppShell> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = context.watch<LocaleProvider>().languageCode;
+    final s = AppStrings(lang);
+
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: Container(
@@ -42,7 +48,7 @@ class _AppShellState extends State<AppShell> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _navItem(0, Icons.home_outlined, Icons.home_rounded, 'Home'),
+                _navItem(0, Icons.home_outlined, Icons.home_rounded, s.get('home')),
                 GestureDetector(
                   onTap: () => Navigator.push(context,
                       MaterialPageRoute(builder: (_) => const AddFoodScreen())),
@@ -63,7 +69,7 @@ class _AppShellState extends State<AppShell> {
                     child: const Icon(Icons.add, color: Colors.white, size: 26),
                   ),
                 ),
-                _navItem(1, Icons.settings_outlined, Icons.settings_rounded, 'Settings'),
+                _navItem(1, Icons.settings_outlined, Icons.settings_rounded, s.get('settings')),
               ],
             ),
           ),

@@ -4,8 +4,12 @@ import 'package:provider/provider.dart';
 import 'package:smart_grocery_tracker/models/food_item.dart';
 import 'package:smart_grocery_tracker/providers/auth_provider.dart';
 import 'package:smart_grocery_tracker/providers/food_provider.dart';
+import 'package:smart_grocery_tracker/providers/locale_provider.dart';
+import 'package:smart_grocery_tracker/utils/app_strings.dart';
 import 'package:smart_grocery_tracker/utils/app_theme.dart';
 import 'package:smart_grocery_tracker/utils/constants.dart';
+
+// ignore_for_file: deprecated_member_use
 
 /// Screen to add or edit a food item.
 class AddFoodScreen extends StatefulWidget {
@@ -89,10 +93,12 @@ class _AddFoodScreenState extends State<AddFoodScreen>
   }
 
   Future<void> _handleSubmit() async {
+    final s = AppStrings(context.read<LocaleProvider>().languageCode);
+
     if (_nameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Please enter a food name'),
+          content: Text(s.get('enterFoodName')),
           backgroundColor: AppTheme.expiredRed,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -102,7 +108,7 @@ class _AddFoodScreenState extends State<AddFoodScreen>
       );
       return;
     }
-    
+
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isSubmitting = true);
@@ -137,8 +143,8 @@ class _AddFoodScreenState extends State<AddFoodScreen>
         SnackBar(
           content: Text(
             _isEditing
-                ? '${item.name} updated successfully'
-                : '${item.name} added successfully',
+                ? '${item.name} ${s.get('updatedSuccess')}'
+                : '${item.name} ${s.get('addedSuccess')}',
           ),
           backgroundColor: AppTheme.primaryGreen,
           behavior: SnackBarBehavior.floating,
@@ -151,6 +157,7 @@ class _AddFoodScreenState extends State<AddFoodScreen>
   }
 
   Future<void> _handleDelete() async {
+    final s = AppStrings(context.read<LocaleProvider>().languageCode);
     final authProvider = context.read<AuthProvider>();
     final foodProvider = context.read<FoodProvider>();
     final uid = authProvider.user!.uid;
@@ -159,16 +166,16 @@ class _AddFoodScreenState extends State<AddFoodScreen>
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Food Item'),
-        content: Text('Are you sure you want to delete "${item.name}"?'),
+        title: Text(s.get('deleteFoodItem')),
+        content: Text('${s.get('deleteConfirm')} "${item.name}"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel', style: TextStyle(color: AppTheme.textMedium)),
+            child: Text(s.get('cancel'), style: const TextStyle(color: AppTheme.textMedium)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Delete', style: TextStyle(color: AppTheme.expiredRed)),
+            child: Text(s.get('delete'), style: const TextStyle(color: AppTheme.expiredRed)),
           ),
         ],
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -190,7 +197,7 @@ class _AddFoodScreenState extends State<AddFoodScreen>
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${widget.existingItem!.name} deleted'),
+          content: Text('${widget.existingItem!.name} ${s.get('deleted')}'),
           backgroundColor: AppTheme.textDark,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -231,7 +238,9 @@ class _AddFoodScreenState extends State<AddFoodScreen>
 
   @override
   Widget build(BuildContext context) {
-    final dateFormat = DateFormat('EEEE, MMM dd, yyyy');
+    final lang = context.watch<LocaleProvider>().languageCode;
+    final s = AppStrings(lang);
+    final dateFormat = DateFormat('EEEE, MMM dd, yyyy', lang);
 
     return Scaffold(
       backgroundColor: AppTheme.scaffoldBg,
@@ -243,7 +252,7 @@ class _AddFoodScreenState extends State<AddFoodScreen>
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          _isEditing ? 'Edit Food Item' : 'Add Food Item',
+          _isEditing ? s.get('editFoodItem') : s.get('addFoodItem'),
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -262,7 +271,7 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // Category Dropdown
-                  _buildSectionLabel('Category'),
+                  _buildSectionLabel(s.get('category')),
                   const SizedBox(height: 8),
                   Container(
                     decoration: BoxDecoration(
@@ -271,12 +280,11 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                       border: Border.all(color: AppTheme.surfaceGrey),
                     ),
                     child: DropdownButtonFormField<String>(
-                      // ignore: deprecated_member_use
                       value: _selectedCategory,
                       items: AppConstants.foodCategories
                           .map((cat) => DropdownMenuItem(
                                 value: cat,
-                                child: Text(cat),
+                                child: Text(AppConstants.categoryDisplay(cat, lang)),
                               ))
                           .toList(),
                       onChanged: (value) {
@@ -301,7 +309,7 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                   const SizedBox(height: 24),
 
                   // Name Field
-                  _buildSectionLabel('Food Name'),
+                  _buildSectionLabel(s.get('foodName')),
                   const SizedBox(height: 8),
                   Builder(
                     builder: (context) {
@@ -321,13 +329,12 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                           border: Border.all(color: AppTheme.surfaceGrey),
                         ),
                         child: DropdownButtonFormField<String>(
-                          // ignore: deprecated_member_use
                           value: currentName.isEmpty ? null : currentName,
-                          hint: const Text('Select an item', style: TextStyle(color: AppTheme.textHint, fontSize: 14)),
+                          hint: Text(s.get('selectAnItem'), style: const TextStyle(color: AppTheme.textHint, fontSize: 14)),
                           items: items
                               .map((item) => DropdownMenuItem(
                                     value: item,
-                                    child: Text(item),
+                                    child: Text(AppConstants.itemDisplay(item, lang)),
                                   ))
                               .toList(),
                           onChanged: (value) {
@@ -353,7 +360,7 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                   const SizedBox(height: 24),
 
                   // Quantity Field
-                  _buildSectionLabel('Quantity'),
+                  _buildSectionLabel(s.get('quantity')),
                   const SizedBox(height: 8),
                   Row(
                     children: [
@@ -392,11 +399,11 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                           ),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
-                              return 'Required';
+                              return s.get('required');
                             }
                             final qty = int.tryParse(value.trim());
                             if (qty == null || qty < 1) {
-                              return 'Min 1';
+                              return s.get('min1');
                             }
                             return null;
                           },
@@ -417,7 +424,7 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                   const SizedBox(height: 24),
 
                   // Expiry Date Picker
-                  _buildSectionLabel('Expiry Date'),
+                  _buildSectionLabel(s.get('expiryDate')),
                   const SizedBox(height: 8),
                   InkWell(
                     onTap: _pickExpiryDate,
@@ -475,7 +482,7 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                               ),
                             )
                           : Text(
-                              _isEditing ? 'Update Item' : 'Add Item',
+                              _isEditing ? s.get('updateItem') : s.get('addItem'),
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -496,9 +503,9 @@ class _AddFoodScreenState extends State<AddFoodScreen>
                             borderRadius: BorderRadius.circular(14),
                           ),
                         ),
-                        child: const Text(
-                          'Delete Item',
-                          style: TextStyle(
+                        child: Text(
+                          s.get('deleteItem'),
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_grocery_tracker/providers/auth_provider.dart';
+import 'package:smart_grocery_tracker/providers/locale_provider.dart';
 import 'package:smart_grocery_tracker/screens/auth/signup_screen.dart';
+import 'package:smart_grocery_tracker/utils/app_strings.dart';
 import 'package:smart_grocery_tracker/utils/app_theme.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -40,8 +42,9 @@ class _LoginScreenState extends State<LoginScreen>
     final auth = context.read<AuthProvider>();
     final ok = await auth.signInWithEmail(_emailCtrl.text.trim(), _passCtrl.text.trim());
     if (!ok && mounted) {
+      final s = AppStrings(context.read<LocaleProvider>().languageCode);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(auth.error ?? 'Login failed'),
+        content: Text(auth.error ?? s.get('loginFailed')),
         backgroundColor: AppTheme.expiredRed,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -53,8 +56,9 @@ class _LoginScreenState extends State<LoginScreen>
     final auth = context.read<AuthProvider>();
     final ok = await auth.signInWithGoogle();
     if (!ok && mounted) {
+      final s = AppStrings(context.read<LocaleProvider>().languageCode);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(auth.error ?? 'Google sign-in failed'),
+        content: Text(auth.error ?? s.get('googleSignInFailed')),
         backgroundColor: AppTheme.expiredRed,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -65,6 +69,9 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
+    final lang = context.watch<LocaleProvider>().languageCode;
+    final s = AppStrings(lang);
+
     return Scaffold(
       backgroundColor: AppTheme.scaffoldBg,
       body: SafeArea(
@@ -87,39 +94,39 @@ class _LoginScreenState extends State<LoginScreen>
                     ),
                   ),
                   const SizedBox(height: 32),
-                  const Center(
-                    child: Text('Welcome Back',
-                        style: TextStyle(
+                  Center(
+                    child: Text(s.get('welcomeBack'),
+                        style: const TextStyle(
                             fontSize: 26,
                             fontWeight: FontWeight.w800,
                             color: AppTheme.textDark)),
                   ),
                   const SizedBox(height: 6),
-                  const Center(
-                    child: Text('Sign in to your account',
-                        style: TextStyle(fontSize: 14, color: AppTheme.textLight)),
+                  Center(
+                    child: Text(s.get('signInSubtitle'),
+                        style: const TextStyle(fontSize: 14, color: AppTheme.textLight)),
                   ),
                   const SizedBox(height: 36),
 
-                  _label('Email'),
+                  _label(s.get('email')),
                   const SizedBox(height: 8),
                   TextFormField(
                     controller: _emailCtrl,
                     keyboardType: TextInputType.emailAddress,
                     style: const TextStyle(fontSize: 15),
-                    decoration: const InputDecoration(
-                      hintText: 'you@email.com',
-                      prefixIcon: Icon(Icons.mail_outline, size: 20, color: AppTheme.textHint),
+                    decoration: InputDecoration(
+                      hintText: s.get('emailHint'),
+                      prefixIcon: const Icon(Icons.mail_outline, size: 20, color: AppTheme.textHint),
                     ),
                     validator: (v) {
-                      if (v == null || v.isEmpty) return 'Enter your email';
-                      if (!v.contains('@')) return 'Invalid email';
+                      if (v == null || v.isEmpty) return s.get('enterEmail');
+                      if (!v.contains('@')) return s.get('invalidEmail');
                       return null;
                     },
                   ),
                   const SizedBox(height: 18),
 
-                  _label('Password'),
+                  _label(s.get('password')),
                   const SizedBox(height: 8),
                   TextFormField(
                     controller: _passCtrl,
@@ -135,8 +142,8 @@ class _LoginScreenState extends State<LoginScreen>
                       ),
                     ),
                     validator: (v) {
-                      if (v == null || v.isEmpty) return 'Enter your password';
-                      if (v.length < 6) return 'At least 6 characters';
+                      if (v == null || v.isEmpty) return s.get('enterPassword');
+                      if (v.length < 6) return s.get('atLeast6Chars');
                       return null;
                     },
                   ),
@@ -156,17 +163,17 @@ class _LoginScreenState extends State<LoginScreen>
                           ? const SizedBox(
                               width: 22, height: 22,
                               child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                          : const Text('Sign In',
-                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
+                          : Text(s.get('signIn'),
+                              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
                     ),
                   ),
                   const SizedBox(height: 20),
 
                   Row(children: [
                     const Expanded(child: Divider(color: AppTheme.surfaceGrey)),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 14),
-                      child: Text('or', style: TextStyle(color: AppTheme.textLight, fontSize: 13)),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      child: Text(s.get('or'), style: const TextStyle(color: AppTheme.textLight, fontSize: 13)),
                     ),
                     const Expanded(child: Divider(color: AppTheme.surfaceGrey)),
                   ]),
@@ -179,8 +186,8 @@ class _LoginScreenState extends State<LoginScreen>
                       onPressed: auth.isLoading ? null : _google,
                       icon: const Text('G',
                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
-                      label: const Text('Continue with Google',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                      label: Text(s.get('continueWithGoogle'),
+                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppTheme.textDark,
                         side: BorderSide(color: AppTheme.surfaceGrey),
@@ -196,13 +203,13 @@ class _LoginScreenState extends State<LoginScreen>
                       onTap: () => Navigator.push(context,
                           MaterialPageRoute(builder: (_) => const SignupScreen())),
                       child: RichText(
-                        text: const TextSpan(
-                          text: "Don't have an account? ",
-                          style: TextStyle(color: AppTheme.textLight, fontSize: 14),
+                        text: TextSpan(
+                          text: s.get('noAccount'),
+                          style: const TextStyle(color: AppTheme.textLight, fontSize: 14),
                           children: [
                             TextSpan(
-                              text: 'Sign Up',
-                              style: TextStyle(
+                              text: s.get('signUp'),
+                              style: const TextStyle(
                                   color: AppTheme.heroStart, fontWeight: FontWeight.w700),
                             ),
                           ],

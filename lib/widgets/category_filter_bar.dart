@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:smart_grocery_tracker/providers/locale_provider.dart';
+import 'package:smart_grocery_tracker/utils/app_strings.dart';
 import 'package:smart_grocery_tracker/utils/app_theme.dart';
 import 'package:smart_grocery_tracker/utils/constants.dart';
 
 /// Clean horizontal filter chips — text only, no emojis.
+/// Shows translated category names based on current locale.
 class CategoryFilterBar extends StatelessWidget {
   final String? selectedCategory;
   final ValueChanged<String?> onCategorySelected;
@@ -15,6 +19,9 @@ class CategoryFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = context.watch<LocaleProvider>().languageCode;
+    final s = AppStrings(lang);
+
     return SizedBox(
       height: 38,
       child: ListView.builder(
@@ -23,10 +30,11 @@ class CategoryFilterBar extends StatelessWidget {
         itemCount: AppConstants.foodCategories.length + 1,
         itemBuilder: (context, index) {
           if (index == 0) {
-            return _chip('All', null);
+            return _chip(s.get('all'), null);
           }
-          final cat = AppConstants.foodCategories[index - 1];
-          return _chip(cat, cat);
+          final catKey = AppConstants.foodCategories[index - 1];
+          final catDisplay = AppConstants.categoryDisplay(catKey, lang);
+          return _chip(catDisplay, catKey);
         },
       ),
     );

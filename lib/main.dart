@@ -7,7 +7,9 @@ import 'package:provider/provider.dart';
 import 'package:smart_grocery_tracker/app.dart';
 import 'package:smart_grocery_tracker/providers/auth_provider.dart';
 import 'package:smart_grocery_tracker/providers/food_provider.dart';
+import 'package:smart_grocery_tracker/providers/locale_provider.dart';
 import 'package:smart_grocery_tracker/screens/auth/login_screen.dart';
+import 'package:smart_grocery_tracker/utils/app_strings.dart';
 import 'package:smart_grocery_tracker/utils/app_theme.dart';
 import 'firebase_options.dart';
 
@@ -46,6 +48,7 @@ class SmartGroceryApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => FoodProvider()),
+        ChangeNotifierProvider(create: (_) => LocaleProvider()),
       ],
       child: MaterialApp(
         title: 'Smart Grocery Tracker',
@@ -105,14 +108,20 @@ class _SplashScreenState extends State<_SplashScreen> {
               fit: BoxFit.contain,
             ),
             const SizedBox(height: 24),
-            const Text('Smart Grocery',
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                    color: AppTheme.textDark)),
-            const SizedBox(height: 6),
-            const Text('Track. Manage. Save.',
-                style: TextStyle(fontSize: 14, color: AppTheme.textLight)),
+            Builder(builder: (context) {
+              final lang = context.watch<LocaleProvider>().languageCode;
+              final s = AppStrings(lang);
+              return Column(children: [
+                Text(s.get('smartGrocery'),
+                    style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                        color: AppTheme.textDark)),
+                const SizedBox(height: 6),
+                Text(s.get('tagline'),
+                    style: const TextStyle(fontSize: 14, color: AppTheme.textLight)),
+              ]);
+            }),
             const SizedBox(height: 32),
             const CircularProgressIndicator(
                 color: AppTheme.heroStart, strokeWidth: 2.5),

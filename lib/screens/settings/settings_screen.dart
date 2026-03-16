@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_grocery_tracker/providers/auth_provider.dart';
+import 'package:smart_grocery_tracker/providers/locale_provider.dart';
+import 'package:smart_grocery_tracker/utils/app_strings.dart';
 import 'package:smart_grocery_tracker/utils/app_theme.dart';
 
 /// Settings screen with Profile, Account (email/password), and Preferences.
@@ -12,12 +14,12 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String _selectedLanguage = 'English';
-
   @override
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
+    final localeProvider = context.watch<LocaleProvider>();
     final user = authProvider.user;
+    final s = AppStrings(localeProvider.languageCode);
 
     return Scaffold(
       backgroundColor: AppTheme.scaffoldBg,
@@ -30,9 +32,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 20),
 
               // Header
-              const Text(
-                'Settings',
-                style: TextStyle(
+              Text(
+                s.get('settings'),
+                style: const TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.w700,
                   color: AppTheme.textDark,
@@ -41,7 +43,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 28),
 
               // ───── Profile Section ─────
-              _buildSectionHeader('Profile'),
+              _buildSectionHeader(s.get('profile')),
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(20),
@@ -105,7 +107,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     IconButton(
                       icon: const Icon(Icons.edit_outlined,
                           color: AppTheme.primaryGreen, size: 22),
-                      onPressed: () => _showEditNameDialog(context),
+                      onPressed: () => _showEditNameDialog(context, s),
                     ),
                   ],
                 ),
@@ -113,29 +115,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: 28),
 
               // ───── Account Section ─────
-              _buildSectionHeader('Account'),
+              _buildSectionHeader(s.get('account')),
               const SizedBox(height: 12),
               _buildSettingsCard(
                 children: [
                   _buildSettingsTile(
                     icon: Icons.lock_outline,
-                    title: 'Change Password',
+                    title: s.get('changePassword'),
                     subtitle: '••••••••',
-                    onTap: () => _showChangePasswordDialog(context),
+                    onTap: () => _showChangePasswordDialog(context, s),
                   ),
                 ],
               ),
               const SizedBox(height: 28),
 
               // ───── Preferences Section ─────
-              _buildSectionHeader('Preferences'),
+              _buildSectionHeader(s.get('preferences')),
               const SizedBox(height: 12),
               _buildSettingsCard(
                 children: [
                   _buildSettingsTile(
                     icon: Icons.language_outlined,
-                    title: 'Language',
-                    subtitle: _selectedLanguage,
+                    title: s.get('language'),
+                    subtitle: localeProvider.languageName,
                     trailing: Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 6),
@@ -144,7 +146,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        _selectedLanguage,
+                        localeProvider.languageName,
                         style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -152,24 +154,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                       ),
                     ),
-                    onTap: () => _showLanguagePicker(context),
+                    onTap: () => _showLanguagePicker(context, s),
                   ),
                 ],
               ),
               const SizedBox(height: 28),
-
-
 
               // ───── Sign Out ─────
               SizedBox(
                 width: double.infinity,
                 height: 52,
                 child: OutlinedButton.icon(
-                  onPressed: () => _handleSignOut(context),
+                  onPressed: () => _handleSignOut(context, s),
                   icon: const Icon(Icons.logout, color: AppTheme.expiredRed),
-                  label: const Text(
-                    'Sign Out',
-                    style: TextStyle(
+                  label: Text(
+                    s.get('signOut'),
+                    style: const TextStyle(
                       color: AppTheme.expiredRed,
                       fontWeight: FontWeight.w600,
                     ),
@@ -267,7 +267,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   // ───── Dialogs ─────
 
-  void _showEditNameDialog(BuildContext context) {
+  void _showEditNameDialog(BuildContext context, AppStrings s) {
     final controller = TextEditingController(
       text: context.read<AuthProvider>().user?.displayName ?? '',
     );
@@ -276,19 +276,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Edit Display Name'),
+        title: Text(s.get('editDisplayName')),
         content: TextField(
           controller: controller,
           textCapitalization: TextCapitalization.words,
-          decoration: const InputDecoration(
-            hintText: 'Enter your name',
-            prefixIcon: Icon(Icons.person_outline),
+          decoration: InputDecoration(
+            hintText: s.get('enterYourName'),
+            prefixIcon: const Icon(Icons.person_outline),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(s.get('cancel')),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -299,39 +299,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 if (context.mounted) {
                   Navigator.pop(context);
                   if (success) {
-                    _showSuccessSnackbar('Display name updated');
+                    _showSuccessSnackbar(s.get('displayNameUpdated'));
                   }
                 }
               }
             },
-            child: const Text('Save'),
+            child: Text(s.get('save')),
           ),
         ],
       ),
     );
   }
 
-
-
-  void _showChangePasswordDialog(BuildContext context) {
+  void _showChangePasswordDialog(BuildContext context, AppStrings s) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Reset Password'),
-        content: const Text(
-          'We will send a password reset link to your email. Click the link to set your new password, and you will be logged out to log back in.',
-        ),
+        title: Text(s.get('resetPassword')),
+        content: Text(s.get('resetPasswordMessage')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(s.get('cancel')),
           ),
           ElevatedButton(
             onPressed: () async {
               final email = context.read<AuthProvider>().user?.email;
               if (email == null) {
-                _showErrorSnackbar('No email associated with this account');
+                _showErrorSnackbar(s.get('noEmailAssociated'));
                 return;
               }
               final success =
@@ -339,69 +335,76 @@ class _SettingsScreenState extends State<SettingsScreen> {
               if (context.mounted) {
                 Navigator.pop(context);
                 if (success) {
-                  _showSuccessSnackbar(
-                      'Reset email sent. Please check your inbox.');
+                  _showSuccessSnackbar(s.get('resetEmailSent'));
                   await context.read<AuthProvider>().signOut();
                 } else {
                   _showErrorSnackbar(
                       context.read<AuthProvider>().error ??
-                          'Failed to send reset email');
+                          s.get('failedToSendReset'));
                 }
               }
             },
-            child: const Text('Send Email'),
+            child: Text(s.get('sendEmail')),
           ),
         ],
       ),
     );
   }
 
-  void _showLanguagePicker(BuildContext context) {
+  void _showLanguagePicker(BuildContext context, AppStrings s) {
+    final localeProvider = context.read<LocaleProvider>();
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Select Language'),
+        title: Text(s.get('selectLanguage')),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildLanguageTile('English', 'EN'),
+            _buildLanguageTile(ctx, localeProvider, 'English', 'en'),
             const Divider(height: 1),
-            _buildLanguageTile('Deutsch', 'DE'),
+            _buildLanguageTile(ctx, localeProvider, 'Deutsch', 'de'),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildLanguageTile(String language, String code) {
-    final isSelected = _selectedLanguage == language;
+  Widget _buildLanguageTile(
+    BuildContext dialogContext,
+    LocaleProvider localeProvider,
+    String language,
+    String code,
+  ) {
+    final isSelected = localeProvider.languageCode == code;
     return ListTile(
       title: Text(language),
-      subtitle: Text(code),
+      subtitle: Text(code.toUpperCase()),
       trailing: isSelected
           ? const Icon(Icons.check_circle, color: AppTheme.primaryGreen)
           : null,
       onTap: () {
-        setState(() => _selectedLanguage = language);
-        Navigator.pop(context);
-        _showSuccessSnackbar('Language set to $language');
+        localeProvider.setLanguage(code);
+        Navigator.pop(dialogContext);
+        final newS = AppStrings(code);
+        _showSuccessSnackbar('${newS.get('languageSetTo')} $language');
       },
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     );
   }
 
-  void _handleSignOut(BuildContext context) {
+  void _handleSignOut(BuildContext context, AppStrings s) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Sign Out'),
-        content: const Text('Are you sure you want to sign out?'),
+        title: Text(s.get('signOut')),
+        content: Text(s.get('signOutConfirm')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(s.get('cancel')),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -411,7 +414,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.expiredRed,
             ),
-            child: const Text('Sign Out'),
+            child: Text(s.get('signOut')),
           ),
         ],
       ),
