@@ -80,16 +80,23 @@ lib/
 ## Dependencies
 
 ```yaml
-firebase_core: Firebase initialization
-firebase_auth: Authentication system
-google_sign_in: Google login integration
-cloud_firestore: NoSQL real-time database
-firebase_storage: File and image storage
-provider: State management
-intl: Date formatting
-image_picker: Camera and gallery access
-cached_network_image: Efficient image caching
-uuid: Unique ID generation
+# Firebase & Authentication
+firebase_core        # Required base package to initialize Firebase in Flutter
+firebase_auth        # Handles user authentication (email/password and Google)
+google_sign_in       # Enables Google OAuth login flow on Android and iOS
+cloud_firestore      # Real-time NoSQL database for storing grocery items and user data
+firebase_storage     # Stores and retrieves user-uploaded grocery item images
+
+# State Management
+provider             # Lightweight state management using the Provider pattern (MVVM)
+
+# Image Handling
+image_picker         # Accesses device camera and gallery to upload grocery images
+cached_network_image # Caches Firebase Storage images locally to reduce load time and data usage
+
+# Utilities
+intl                 # Formats expiry dates and timestamps in a human-readable way
+uuid                 # Generates unique IDs for each grocery item and activity log entry
 ```
 
 ---
