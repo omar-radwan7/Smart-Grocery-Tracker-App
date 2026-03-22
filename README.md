@@ -1,185 +1,189 @@
-Smart Grocery Tracker
+# Smart Grocery Tracker
 
-A Flutter mobile application for tracking grocery items and their expiration dates.
-The app helps users avoid food waste by providing visual expiry warnings and simple grocery management tools.
+A cross-platform Flutter mobile application for tracking grocery items and their expiration dates. The app helps users reduce food waste through visual expiry warnings, smart categorization, and a clean, intuitive interface.
 
-Features
+---
 
-Firebase Authentication (Email/Password + Google Sign-In)
+## Overview
 
-Expiry tracking with visual indicators (Fresh / Expiring / Expired)
+Managing groceries and avoiding food waste is a daily challenge. Smart Grocery Tracker solves this by giving users a clear, visual overview of everything in their fridge and pantry — with color-coded expiry indicators, category filtering, and real-time Firestore sync across devices.
 
-Add, edit, and delete grocery items
+---
 
-Category filtering and search
+## Features
 
-Image upload for grocery items
+- **Firebase Authentication** — Email/Password and Google Sign-In
+- **Expiry Tracking** — Visual indicators for Fresh, Expiring Soon, and Expired items
+- **Full CRUD** — Add, edit, and delete grocery items with image support
+- **Category Filtering** — Filter by Fruits, Vegetables, Dairy, and more
+- **Search** — Quickly find items by name
+- **Image Upload** — Attach photos to grocery items via camera or gallery
+- **Activity Logging** — Every add, edit, and delete is recorded in the user's activity history
+- **Responsive UI** — Clean Material Design interface optimized for mobile
 
-Activity logging for user actions
+---
 
-Responsive mobile UI
+## Screenshots
 
-Screenshots
-Sign In
-![Sign in](https://github.com/user-attachments/assets/05ec6707-a4aa-4ad9-9bb4-141b4254f124)
+| Sign In | Dashboard | Grocery Grid |
+|--------|-----------|--------------|
+| ![Sign in](https://github.com/user-attachments/assets/05ec6707-a4aa-4ad9-9bb4-141b4254f124) | ![Dashboard](https://github.com/user-attachments/assets/11962f0f-a801-4d72-8f2d-50240a85db3d) | ![Grid](https://github.com/user-attachments/assets/f2adb803-bb5a-4ef8-aba8-d31958dbd079) |
 
-Users log in with email/password or Google authentication. Successful login starts a user session and loads the personal grocery dashboard.
+| Add Item | Edit Item | Profile |
+|----------|-----------|---------|
+| ![Add](https://github.com/user-attachments/assets/9739642c-2ab0-4895-93c0-858dd50a420a) | ![Edit](https://github.com/user-attachments/assets/749115f5-2bfd-4c38-b431-b49eaaf86d4a) | ![Profile](https://github.com/user-attachments/assets/24d41fc5-7cda-4f6c-bd19-d08b8de24af7) |
 
-Google Sign In
-![signing in with google screen](https://github.com/user-attachments/assets/e7849176-a450-49f0-9fd6-af80f652413c)
+---
 
-Users select a Google account to authenticate. This action creates or links a user account in Firebase Authentication.
+## Architecture
 
-Create Account
-![sign up](https://github.com/user-attachments/assets/e68324e0-81d9-4301-87c3-86eebd50f17e)
+The project follows a scalable **MVVM-inspired architecture** using the Provider package for state management, with clearly separated layers for models, services, providers, and UI.
 
-New users register with name, email, and password. Account creation initializes the user's Firestore data structure.
+```
+lib/
+├── app/
+│   ├── models/           # Data structures (FoodItem, User, Activity)
+│   ├── providers/        # State management (AuthProvider, FoodProvider)
+│   ├── screens/          # Feature-based UI modules
+│   │   ├── auth/         # Sign in, Sign up screens
+│   │   ├── dashboard/    # Home dashboard
+│   │   ├── add_food/     # Add and edit item screens
+│   │   └── settings/     # Profile and preferences
+│   ├── services/         # Firebase communication layer
+│   │   ├── AuthService
+│   │   ├── FirestoreService
+│   │   ├── StorageService
+│   │   └── ActivityService
+│   └── widgets/          # Reusable UI components
+│       ├── FoodCard
+│       ├── ExpiryBadge
+│       └── CategoryFilterBar
+└── utils/                # Constants, theme, expiry calculations
+```
 
-Dashboard
-![Home page screen](https://github.com/user-attachments/assets/11962f0f-a801-4d72-8f2d-50240a85db3d)
+---
 
-The dashboard shows grocery statistics and expiry summaries. Users can search, filter, or navigate to manage items.
+## Tech Stack
 
-Grocery Items Grid
-![scroll items screen](https://github.com/user-attachments/assets/f2adb803-bb5a-4ef8-aba8-d31958dbd079)
+| Layer | Technology |
+|-------|------------|
+| Framework | Flutter (Dart) |
+| Authentication | Firebase Auth |
+| Database | Cloud Firestore |
+| Storage | Firebase Storage |
+| State Management | Provider |
+| Image Handling | image_picker, cached_network_image |
+| Date Formatting | intl |
 
-Displays grocery cards with images, quantities, and expiry dates. Users can tap items to edit them or swipe to delete.
+---
 
-Category Filter
-![Item filter screen](https://github.com/user-attachments/assets/ad688df3-2fc6-4b87-8917-c6b036219446)
+## Dependencies
 
-Users filter groceries by category such as Fruits, Vegetables, or Dairy to quickly find specific items.
+```yaml
+firebase_core: Firebase initialization
+firebase_auth: Authentication system
+google_sign_in: Google login integration
+cloud_firestore: NoSQL real-time database
+firebase_storage: File and image storage
+provider: State management
+intl: Date formatting
+image_picker: Camera and gallery access
+cached_network_image: Efficient image caching
+uuid: Unique ID generation
+```
 
-Add Item
-![add item screen](https://github.com/user-attachments/assets/9739642c-2ab0-4895-93c0-858dd50a420a)
+---
 
-Users add a new grocery item by selecting a category, setting quantity, choosing an expiry date, and optionally uploading a photo.
+## Getting Started
 
-Each creation action is logged in the activity history.
+### Prerequisites
 
-Edit Item
-![Edit item screen](https://github.com/user-attachments/assets/749115f5-2bfd-4c38-b431-b49eaaf86d4a)
+- Flutter SDK 3.9.0+
+- Android Studio or Xcode
+- A Firebase project
 
-Users update item details or delete an item. Edits and deletions are recorded as user activity even
+### 1. Clone the Repository
 
-Settings
-User Profile
-![user profile](https://github.com/user-attachments/assets/24d41fc5-7cda-4f6c-bd19-d08b8de24af7)
-
-Manage profile information, password, language preferences, and sign out.
-rchitecture
-
-The project follows a scalable MVVM-inspired architecture using the Provider package for state management.
-
-Models
-Data structures representing application entities.
-
-Example:
-FoodItem
-
-Services
-Responsible for communicating with Firebase services.
-
-AuthService
-FirestoreService
-StorageService
-ActivityService
-
-Providers
-Manage application state and expose data to the UI.
-
-AuthProvider
-FoodProvider
-
-Screens
-Feature-based UI modules:
-
-auth
-dashboard
-add_food
-settings
-
-Widgets
-Reusable UI components such as:
-
-FoodCard
-ExpiryBadge
-CategoryFilterBar
-
-Utils
-Shared helpers including:
-
-constants
-theme
-expiry calculations
-
-Packages Used
-
-firebase_core – Firebase initialization
-firebase_auth – Authentication system
-google_sign_in – Google login integration
-cloud_firestore – NoSQL database
-firebase_storage – File and image storage
-provider – State management
-intl – Date formatting
-image_picker – Image selection from camera/gallery
-cached_network_image – Efficient image caching
-uuid – Unique ID generation
-
-Project Structure
-![Screenshot_2026-03-08_16-53-34](https://github.com/user-attachments/assets/a3848fa8-fd61-4f07-8816-0e82dad1c5ed)
-
-     
-Setup Instructions
-Prerequisites
-
-Flutter SDK 3.9.0+
-Android Studio or Xcode
-Firebase project
-
-1 Clone Repository
+```bash
 git clone https://github.com/omar-radwan7/Smart-Grocery-Tracker-App.git
 cd Smart-Grocery-Tracker-App
-2 Firebase Setup
+```
 
-Create a project in the Firebase Console.
+### 2. Firebase Setup
 
-Enable Authentication:
+1. Create a project in the [Firebase Console](https://console.firebase.google.com)
+2. Enable Authentication:
+   - Email/Password
+   - Google Sign-In
+3. Create a Firestore database
+4. Enable Firebase Storage
+5. Add an Android app with package name: `com.smartgrocery.smart_grocery_tracker`
+6. Download `google-services.json` and place it in `android/app/`
 
-Email/Password
+### 3. Install Dependencies
 
-Google Sign-In
-
-Create a Firestore database.
-
-Enable Firebase Storage.
-
-Add an Android application with package name:
-
-com.smartgrocery.smart_grocery_tracker
-
-Download google-services.json and place it inside:
-
-android/app/
-3 Install Dependencies
+```bash
 flutter pub get
-4 Run the App
+```
+
+### 4. Run the App
+
+```bash
 flutter run
-Optional: Run with Docker
+```
 
-Test Scenarios
+---
 
-To quickly test expiry states:
+## Firestore Data Structure
 
-Fresh Milk
-Expiry: Today + 10 days
+```
+users/
+  {userId}/
+    name: string
+    email: string
+    createdAt: timestamp
 
-Yogurt
-Expiry: Today + 2 days
+    groceryItems/
+      {itemId}/
+        name: string
+        category: string
+        quantity: number
+        expiryDate: timestamp
+        imageUrl: string
+        status: "fresh" | "expiring" | "expired"
+        createdAt: timestamp
 
-Old Bread
-Expiry: Yesterday
+    activityLog/
+      {activityId}/
+        action: "added" | "edited" | "deleted"
+        itemName: string
+        timestamp: timestamp
+```
 
-License
+---
+
+## Expiry Status Logic
+
+| Status | Condition |
+|--------|-----------|
+| 🟢 Fresh | Expiry date > 3 days away |
+| 🟡 Expiring Soon | Expiry date within 3 days |
+| 🔴 Expired | Expiry date has passed |
+
+---
+
+## Test Scenarios
+
+To quickly test all expiry states after setup:
+
+| Item | Expiry |
+|------|--------|
+| Fresh Milk | Today + 10 days |
+| Yogurt | Today + 2 days |
+| Old Bread | Yesterday |
+
+---
+
+## License
 
 MIT License
