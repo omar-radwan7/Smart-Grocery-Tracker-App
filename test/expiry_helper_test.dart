@@ -1,7 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:smart_grocery_tracker/utils/expiry_helper.dart';
+import 'package:smart_grocery_tracker/utils/app_strings.dart';
 
 void main() {
+  final s = AppStrings('en');
+
   group('ExpiryHelper.getStatus', () {
     test('returns expired for dates in the past', () {
       final yesterday = DateTime.now().subtract(const Duration(days: 1));
@@ -19,7 +22,7 @@ void main() {
       );
     });
 
-    test('returns expiringSoon for dates within 3 days', () {
+    test('returns expiringSoon for dates within 5 days', () {
       final inThreeDays = DateTime.now().add(const Duration(days: 3));
       expect(
         ExpiryHelper.getStatus(inThreeDays),
@@ -27,44 +30,44 @@ void main() {
       );
     });
 
-    test('returns normal for dates more than 3 days away', () {
-      final inFiveDays = DateTime.now().add(const Duration(days: 5));
+    test('returns normal for dates more than 5 days away', () {
+      final inSixDays = DateTime.now().add(const Duration(days: 6));
       expect(
-        ExpiryHelper.getStatus(inFiveDays),
+        ExpiryHelper.getStatus(inSixDays),
         ExpiryStatus.normal,
       );
     });
   });
 
   group('ExpiryHelper.remainingText', () {
-    test('formats expired message with plural correctly', () {
+    test('formats expired message correctly', () {
       final twoDaysAgo = DateTime.now().subtract(const Duration(days: 2));
       expect(
-        ExpiryHelper.remainingText(twoDaysAgo),
-        'Expired 2 days ago',
+        ExpiryHelper.remainingText(twoDaysAgo, s),
+        'Expired 2 day(s) ago',
       );
     });
 
-    test('formats expired message with singular correctly', () {
+    test('formats expired message for one day correctly', () {
       final oneDayAgo = DateTime.now().subtract(const Duration(days: 1));
       expect(
-        ExpiryHelper.remainingText(oneDayAgo),
-        'Expired 1 day ago',
+        ExpiryHelper.remainingText(oneDayAgo, s),
+        'Expired 1 day(s) ago',
       );
     });
 
-    test('shows \"Expires today\" for today', () {
+    test('shows "Expires today" for today', () {
       final today = DateTime.now();
       expect(
-        ExpiryHelper.remainingText(today),
+        ExpiryHelper.remainingText(today, s),
         'Expires today',
       );
     });
 
-    test('shows \"Expires tomorrow\" for one day ahead', () {
+    test('shows "Expires tomorrow" for one day ahead', () {
       final tomorrow = DateTime.now().add(const Duration(days: 1));
       expect(
-        ExpiryHelper.remainingText(tomorrow),
+        ExpiryHelper.remainingText(tomorrow, s),
         'Expires tomorrow',
       );
     });
@@ -72,7 +75,7 @@ void main() {
     test('shows generic days remaining for > 1 day ahead', () {
       final inFourDays = DateTime.now().add(const Duration(days: 4));
       expect(
-        ExpiryHelper.remainingText(inFourDays),
+        ExpiryHelper.remainingText(inFourDays, s),
         '4 days remaining',
       );
     });

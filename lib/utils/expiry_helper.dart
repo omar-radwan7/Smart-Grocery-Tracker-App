@@ -15,10 +15,7 @@ class ExpiryHelper {
 
   /// Calculates the [ExpiryStatus] based on the expiry date.
   static ExpiryStatus getStatus(DateTime expiryDate) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final expiry = DateTime(expiryDate.year, expiryDate.month, expiryDate.day);
-    final difference = expiry.difference(today).inDays;
+    final difference = daysRemaining(expiryDate);
 
     if (difference < 0) {
       return ExpiryStatus.expired;
@@ -35,9 +32,9 @@ class ExpiryHelper {
   /// Negative values indicate the item has already expired.
   static int daysRemaining(DateTime expiryDate) {
     final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final expiry = DateTime(expiryDate.year, expiryDate.month, expiryDate.day);
-    return expiry.difference(today).inDays;
+    final todayUtc = DateTime.utc(now.year, now.month, now.day);
+    final expiryUtc = DateTime.utc(expiryDate.year, expiryDate.month, expiryDate.day);
+    return expiryUtc.difference(todayUtc).inDays;
   }
 
   /// Returns the display label for the given [ExpiryStatus].

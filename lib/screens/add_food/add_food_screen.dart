@@ -138,7 +138,17 @@ class _AddFoodScreenState extends State<AddFoodScreen>
     setState(() => _isSubmitting = false);
 
     if (success) {
-      Navigator.pop(context);
+      final popped = await Navigator.maybePop(context);
+      if (!popped) {
+        // We're likely in a bottom-nav tab; reset form for next item
+        _nameController.clear();
+        _quantityController.text = '1';
+        _selectedCategory = AppConstants.foodCategories.first;
+        _expiryDate = DateTime.now().add(const Duration(days: 7));
+        setState(() => _isSubmitting = false);
+      }
+      
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -194,7 +204,8 @@ class _AddFoodScreenState extends State<AddFoodScreen>
     setState(() => _isSubmitting = false);
 
     if (success) {
-      Navigator.pop(context);
+      await Navigator.maybePop(context);
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('${widget.existingItem!.name} ${s.get('deleted')}'),
@@ -247,10 +258,10 @@ class _AddFoodScreenState extends State<AddFoodScreen>
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
+        leading: Navigator.canPop(context) ? IconButton(
           icon: const Icon(Icons.arrow_back_ios, size: 20),
           onPressed: () => Navigator.pop(context),
-        ),
+        ) : null,
         title: Text(
           _isEditing ? s.get('editFoodItem') : s.get('addFoodItem'),
           style: const TextStyle(

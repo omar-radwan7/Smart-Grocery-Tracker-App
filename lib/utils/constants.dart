@@ -21,7 +21,7 @@ class AppConstants {
     'Vegetables': ['Tomato', 'Potato', 'Onion', 'Carrot', 'Cucumber', 'Bell Pepper', 'Broccoli', 'Spinach', 'Lettuce', 'Garlic', 'Mushroom', 'Cabbage'],
     'Dairy': ['Milk', 'Cheese', 'Yogurt', 'Butter', 'Cream', 'Eggs'],
     'Meat & Poultry': ['Chicken Breast', 'Beef', 'Pork', 'Turkey', 'Lamb', 'Sausage', 'Bacon'],
-    'Seafood': ['Salmon', 'Tuna', 'Shrimp', 'Cod', 'Crab', 'Tilapia'],
+    'Seafood': ['Salmon', 'Tuna', 'Shrimp'],
     'Bakery': ['Bread', 'Bagels', 'Croissants', 'Muffins', 'Cake'],
   };
 
@@ -84,9 +84,6 @@ class AppConstants {
     'Salmon': 'Lachs',
     'Tuna': 'Thunfisch',
     'Shrimp': 'Garnele',
-    'Cod': 'Kabeljau',
-    'Crab': 'Krabbe',
-    'Tilapia': 'Tilapia',
     // Bakery
     'Bread': 'Brot',
     'Bagels': 'Bagels',
