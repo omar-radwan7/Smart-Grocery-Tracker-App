@@ -3,6 +3,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_grocery_tracker/app.dart';
@@ -17,7 +18,8 @@ import 'firebase_options.dart';
 /// App entry point that initializes Firebase and bootstraps the widget tree.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: '.env'); // Load secrets before Firebase reads them
+  await dotenv.load(fileName: '.env'); // Initialise environment config
+  await initializeDateFormatting(); // Initialise intl locale data for all locales
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   if (!kIsWeb) {

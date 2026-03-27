@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_grocery_tracker/utils/app_strings.dart';
 
 /// Enum representing the expiry status of a food item.
 enum ExpiryStatus {
@@ -23,7 +24,7 @@ class ExpiryHelper {
       return ExpiryStatus.expired;
     } else if (difference == 0) {
       return ExpiryStatus.expiresToday;
-    } else if (difference <= 3) {
+    } else if (difference <= 5) {
       return ExpiryStatus.expiringSoon;
     } else {
       return ExpiryStatus.normal;
@@ -53,17 +54,18 @@ class ExpiryHelper {
     }
   }
 
+
   /// Returns the display text for remaining days.
-  static String remainingText(DateTime expiryDate) {
+  static String remainingText(DateTime expiryDate, AppStrings s) {
     final days = daysRemaining(expiryDate);
     if (days < 0) {
-      return 'Expired ${-days} day${-days == 1 ? '' : 's'} ago';
+      return s.get('expiredAgo').replaceAll('{n}', '${-days}');
     } else if (days == 0) {
-      return 'Expires today';
+      return s.get('expiresToday');
     } else if (days == 1) {
-      return 'Expires tomorrow';
+      return s.get('expiresTomorrow');
     } else {
-      return '$days days remaining';
+      return s.get('daysRemaining').replaceAll('{n}', '$days');
     }
   }
 

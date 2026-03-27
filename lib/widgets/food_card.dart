@@ -29,7 +29,7 @@ class FoodCard extends StatelessWidget {
     final statusColor = ExpiryHelper.statusColor(status);
     final tint = AppTheme.categoryTint(item.category);
     final isExpired = status == ExpiryStatus.expired;
-    final dateText = DateFormat('MMM dd').format(item.expiryDate);
+
 
     // Translated display names
     final displayName = AppConstants.itemDisplay(item.name, lang);
@@ -158,7 +158,7 @@ class FoodCard extends StatelessWidget {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                dateText,
+                                ExpiryHelper.remainingText(item.expiryDate, s),
                                 style: TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w600,

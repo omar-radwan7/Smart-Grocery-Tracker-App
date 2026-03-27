@@ -44,11 +44,13 @@ class FoodProvider extends ChangeNotifier {
   int get normalCount =>
       _foodItems.where((i) => i.expiryStatus == ExpiryStatus.normal).length;
   int get expiringSoonCount =>
-      _foodItems.where((i) => i.expiryStatus == ExpiryStatus.expiringSoon).length;
+      _foodItems.where((i) =>
+          i.expiryStatus == ExpiryStatus.expiringSoon ||
+          i.expiryStatus == ExpiryStatus.expiresToday).length;
   int get expiresTodayCount =>
       _foodItems.where((i) => i.expiryStatus == ExpiryStatus.expiresToday).length;
   int get expiredCount =>
-      _foodItems.where((i) => i.expiryStatus == ExpiryStatus.expired || i.expiryStatus == ExpiryStatus.expiresToday).length;
+      _foodItems.where((i) => i.expiryStatus == ExpiryStatus.expired).length;
 
   /// Set the selected category filter.
   void setCategory(String? category) {
