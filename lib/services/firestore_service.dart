@@ -14,6 +14,18 @@ class FirestoreService {
         .collection(AppConstants.foodItemsCollection);
   }
 
+  /// Creates or updates the user document in the users collection.
+  Future<void> createUserDocument(String uid, String name, String email) async {
+    await _firestore
+        .collection(AppConstants.usersCollection)
+        .doc(uid)
+        .set({
+      'name': name,
+      'email': email,
+      'lastLogin': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
+
   /// Updates the user's email document in the users collection.
   Future<void> updateUserEmail(String uid, String email) async {
     await _firestore

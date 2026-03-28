@@ -92,8 +92,14 @@ class AuthProvider extends ChangeNotifier {
       _setError(null);
       await _authService.signInWithEmail(email, password);
       if (_authService.currentUser != null) {
-        await _authService.currentUser!.getIdToken(true);
-        await _analytics.setUserId(id: _authService.currentUser!.uid);
+        _user = _authService.currentUser;
+        await _firestoreService.createUserDocument(
+          _user!.uid,
+          _user!.displayName ?? 'Unknown',
+          _user!.email ?? email,
+        );
+        await _user!.getIdToken(true);
+        await _analytics.setUserId(id: _user!.uid);
         await _analytics.logLogin(loginMethod: 'email');
       }
       
@@ -121,8 +127,13 @@ class AuthProvider extends ChangeNotifier {
       _setError(null);
       await _authService.signUpWithEmail(email, password, displayName);
       _user = _authService.currentUser;
-      if (_authService.currentUser != null) {
-        await _analytics.setUserId(id: _authService.currentUser!.uid);
+      if (_user != null) {
+        await _firestoreService.createUserDocument(
+          _user!.uid,
+          displayName,
+          email,
+        );
+        await _analytics.setUserId(id: _user!.uid);
         await _analytics.logSignUp(signUpMethod: 'email');
       }
       _setLoading(false);
@@ -145,8 +156,14 @@ class AuthProvider extends ChangeNotifier {
       _setError(null);
       await _authService.signInWithGoogle();
       if (_authService.currentUser != null) {
-        await _authService.currentUser!.getIdToken(true);
-        await _analytics.setUserId(id: _authService.currentUser!.uid);
+        _user = _authService.currentUser;
+        await _firestoreService.createUserDocument(
+          _user!.uid,
+          _user!.displayName ?? 'Unknown',
+          _user!.email ?? 'No email',
+        );
+        await _user!.getIdToken(true);
+        await _analytics.setUserId(id: _user!.uid);
         await _analytics.logLogin(loginMethod: 'google');
       }
       
