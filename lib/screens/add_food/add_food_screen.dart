@@ -138,9 +138,10 @@ class _AddFoodScreenState extends State<AddFoodScreen>
     setState(() => _isSubmitting = false);
 
     if (success) {
-      final popped = await Navigator.maybePop(context);
-      if (!popped) {
-        // We're likely in a bottom-nav tab; reset form for next item
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      } else {
+        // We're in the bottom-nav tab — reset form for next item
         _nameController.clear();
         _quantityController.text = '1';
         _selectedCategory = AppConstants.foodCategories.first;
@@ -204,7 +205,7 @@ class _AddFoodScreenState extends State<AddFoodScreen>
     setState(() => _isSubmitting = false);
 
     if (success) {
-      await Navigator.maybePop(context);
+      if (Navigator.canPop(context)) Navigator.pop(context);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
